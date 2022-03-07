@@ -42,6 +42,20 @@ typedef struct {
 
 ent ents[8];
 
+void ents_bubble_sort(ent ents[]) {
+	// draw lower y axis ents first
+	int size = sizeof *ents / sizeof ents[0];
+	for (int step = 0; step < size - 1; ++step) {
+		for (int i = 0; i < size - step - 1; ++i) {
+			if (ents[i].y > ents[i + 1].y) {
+				ent temp = ents[i];
+				ents[i] = ents[i + 1];
+				ents[i + 1] = temp;
+			}
+		}
+	}
+}
+
 int collision_detection(SDL_Rect a, SDL_Rect b) {
 	if (a.x + a.w < b.x) return 0;
 	if (a.x > b.x + b.w) return 0;
@@ -147,6 +161,7 @@ int main(int argc, char* args[]) {
 		// background refresh
 		SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
 		// sprites
+		ents_bubble_sort(ents);
 		for (int i = 0; i < 8; i++) {
 			if (ents[i].x < 11) ents[i].x_dir = abs(rnd_direction());
 			if (ents[i].x > 389) ents[i].x_dir = -abs(rnd_direction());
@@ -155,7 +170,7 @@ int main(int argc, char* args[]) {
 			for (int j = 0; j < 8; j++) {
 				if (i != j) {
 					if (collision_detection(ents[i].rect, ents[j].rect)) {
-						audio_amp = 0.3f;
+						audio_amp = 0.025f;
 						audio_hertz = (float) ((rand() % 420) + 80) / 32000.f;
 						ents[i].x_dir = -ents[i].x_dir;
 						ents[i].y_dir = -ents[i].y_dir;
