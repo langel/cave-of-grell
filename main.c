@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <SDL2/SDL.h>
 
 int texture_w = 420;
@@ -6,56 +7,159 @@ int texture_h = 200;
 int window_w = 1280;
 int window_h = 720;
 
-SDL_Color palette[8] = {
-	{ 0xf0, 0xf0, 0xdc, 0xff }, // white
-	{ 0xfa, 0xc8, 0x00, 0xff }, // yellow
-	{ 0x10, 0xc8, 0x40, 0xff }, // green
-	{ 0x00, 0xa0, 0xc8, 0xff }, // blue
-	{ 0xd2, 0x40, 0x40, 0xff }, // red
-	{ 0xa0, 0x69, 0x4b, 0xff }, // brown
-	{ 0x73, 0x64, 0x64, 0xff }, // grey
-	{ 0x10, 0x18, 0x20, 0xff }, // black
+SDL_Color sdl_palette[8] = {
+	{ 0xf0, 0xf0, 0xdc, 0xff }, // 0 white
+	{ 0xfa, 0xc8, 0x00, 0xff }, // 1 yellow
+	{ 0x10, 0xc8, 0x40, 0xff }, // 2 green
+	{ 0x00, 0xa0, 0xc8, 0xff }, // 3 blue
+	{ 0xd2, 0x40, 0x40, 0xff }, // 4 red
+	{ 0xa0, 0x69, 0x4b, 0xff }, // 5 brown
+	{ 0x73, 0x64, 0x64, 0xff }, // 6 grey
+	{ 0x10, 0x18, 0x20, 0xff }, // 7 black
 };
 
+uint32_t surface_palette[8];
 
+void set_render_color(SDL_Renderer * renderer, int color_id) {
+		SDL_SetRenderDrawColor(renderer, sdl_palette[color_id].r, sdl_palette[color_id].g, sdl_palette[color_id].b, sdl_palette[color_id].a);
+}
+
+typedef struct {
+	float x;
+	float y;
+	float x_dir;
+	float y_dir;
+	SDL_Texture * texture;
+	SDL_Rect rect;
+} ent;
+
+ent ents[8];
+
+int collision_detection(SDL_Rect a, SDL_Rect b) {
+	if (a.x + a.w < b.x) return 0;
+	if (a.x > b.x + b.w) return 0;
+	if (a.y + a.h < b.y) return 0;
+	if (a.y > b.y + b.h) return 0;
+	return 1;
+}
+
+int rng8() {
+	static uint8_t val = 1;
+	int carry = val & 1;
+	val >>= 1;
+	if (carry) val ^= 0xd4;
+	return (int) val;
+}
+
+float rnd_direction() {
+	return (float) ((rand() % 200) - 100) * 0.025f;
+}
+
+void plot_wall_tile(uint32_t pixels[], int x, int y) {
+	int colors[4] = { 0, 5, 6, 7 };
+
+	for (int x2 = 0; x2 < 10; x2++) {
+		for (int y2 = 0; y2 < 10; y2++) {
+			int color_id = colors[rng8() & 3];
+			pixels[x + x2 + (y + y2) * texture_w] = surface_palette[color_id];
+		}
+	}
+}
 
 int main(int argc, char* args[]) {
 
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_Event event;
-	SDL_Window * window = SDL_CreateWindow("Over Scaling Demo", 100, 200,
+	SDL_Window * window = SDL_CreateWindow("Cave of Grell", 100, 200,
 		window_w, window_h, SDL_WINDOW_RESIZABLE);
 	SDL_Renderer * renderer = SDL_CreateRenderer(window,
 		-1, SDL_RENDERER_PRESENTVSYNC);
 
+	for (int i = 0; i < 8; i++) {
+		uint32_t color = 0;
+		color += sdl_palette[i].r << 24;
+		color += sdl_palette[i].g << 16;
+		color += sdl_palette[i].b << 8;
+		color += 255;
+		surface_palette[i] = color;
+	}
+
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 	uint32_t * pixels = malloc(texture_w * texture_h * 4);
-	SDL_Texture * pixel_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, texture_w, texture_h);
+	SDL_Texture * bg_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, texture_w, texture_h);
+	// dirt floor
 	for (int x = 0; x < texture_w; x++) {
 		for (int y = 0; y < texture_h; y++) {
-			uint32_t color = 0;
-			int color_id = (x + y) % 8;
-			color += palette[color_id].r << 24;
-			color += palette[color_id].g << 16;
-			color += palette[color_id].b << 8;
-			color += 255;
-			pixels[x + y * texture_w] = color;
+			int color_id = (rng8() & rng8() & rng8() & rng8() & rng8() & 13) ? 5 : 7;
+			pixels[x + y * texture_w] = surface_palette[color_id];
 		}
 	}
-	SDL_UpdateTexture(pixel_texture, NULL, pixels, texture_w * 4);
+	// wall tiles
+	for (int x = 0; x < texture_w; x += 10) {
+		plot_wall_tile(pixels, x, 0);
+		plot_wall_tile(pixels, x, 190);
+	}
+	for (int y = 10; y < texture_h - 10; y += 10) {
+		plot_wall_tile(pixels, 0, y);
+		plot_wall_tile(pixels, 410, y);
+	}
+	SDL_UpdateTexture(bg_texture, NULL, pixels, texture_w * 4);
+	
+	SDL_Texture * vid_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, texture_w, texture_h);
+
+	// setup ents
+	for (int i = 0; i < 8; i++) {
+		ents[i].x = rand() % 320 + 50;
+		ents[i].y = rand() % 100 + 50;
+		ents[i].x_dir = rnd_direction();
+		ents[i].y_dir = rnd_direction();
+		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+		ents[i].texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 20, 20);
+		SDL_SetTextureColorMod(ents[i].texture, sdl_palette[i].r, sdl_palette[i].g, sdl_palette[i].b);
+		ents[i].rect.x = ents[i].x;
+		ents[i].rect.y = ents[i].y;
+		ents[i].rect.w = 20;
+		ents[i].rect.h = 20;
+		//SDL_SetRenderTarget(renderer, ents[i].texture);
+		//set_render_color(renderer, i);
+		//SDL_RenderClear(renderer);
+	}
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
 	SDL_Texture * overscale_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, texture_w * 3, texture_h * 3);
-	SDL_SetRenderTarget(renderer, overscale_texture);
-	SDL_RenderCopy(renderer, pixel_texture, NULL, NULL);
-
-	SDL_SetRenderTarget(renderer, NULL);
 
 	int running = 1;
 
 	while (running) {
 
-		SDL_RenderClear(renderer);
+		SDL_SetRenderTarget(renderer, vid_texture);
+//		SDL_RenderClear(renderer);
+		// background refresh
+		SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
+		// sprites
+		for (int i = 0; i < 8; i++) {
+			if (ents[i].x < 11) ents[i].x_dir = abs(rnd_direction());
+			if (ents[i].x > 389) ents[i].x_dir = -abs(rnd_direction());
+			if (ents[i].y < 11) ents[i].y_dir = abs(rnd_direction());
+			if (ents[i].y > 169) ents[i].y_dir = -abs(rnd_direction());
+			for (int j = 0; j < 8; j++) {
+				if (i != j) {
+					if (collision_detection(ents[i].rect, ents[j].rect)) {
+						ents[i].x_dir = -ents[i].x_dir;
+						ents[i].y_dir = -ents[i].y_dir;
+					}
+				}
+			}
+			ents[i].x += ents[i].x_dir;
+			ents[i].rect.x = ents[i].x;
+			ents[i].y += ents[i].y_dir;
+			ents[i].rect.y = ents[i].y;
+			SDL_RenderCopy(renderer, ents[i].texture, NULL, &ents[i].rect);
+		}
+		// "shader effects" xD
+		SDL_SetRenderTarget(renderer, overscale_texture);
+		SDL_RenderCopy(renderer, vid_texture, NULL, NULL);
+		SDL_SetRenderTarget(renderer, NULL);
 		SDL_RenderCopy(renderer, overscale_texture, NULL, NULL);
 		SDL_RenderPresent(renderer);
 
