@@ -114,7 +114,9 @@ int main(int argc, char* args[]) {
 		ents[i].x_dir = rnd_direction();
 		ents[i].y_dir = rnd_direction();
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		ents[i].texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, 20, 20);
+		ents[i].texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 20, 20);
+		SDL_SetRenderTarget(renderer, ents[i].texture);
+		SDL_RenderFillRect(renderer, NULL);
 		SDL_SetTextureColorMod(ents[i].texture, sdl_palette[i].r, sdl_palette[i].g, sdl_palette[i].b);
 		ents[i].rect.x = ents[i].x;
 		ents[i].rect.y = ents[i].y;
