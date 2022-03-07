@@ -1,11 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <SDL2/SDL.h>
+#include "lib/debug.c"
 
 int texture_w = 420;
 int texture_h = 200;
 int window_w = 1280;
 int window_h = 720;
+
+float audio_amp = 0.f;
+float audio_hertz = 0.f;
+float audio_phase = 0.f;
+#include "lib/audio.c"
 
 SDL_Color sdl_palette[8] = {
 	{ 0xf0, 0xf0, 0xdc, 0xff }, // 0 white
@@ -68,7 +75,8 @@ void plot_wall_tile(uint32_t pixels[], int x, int y) {
 
 int main(int argc, char* args[]) {
 
-	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Init(SDL_INIT_EVERYTHING);
+	audio_init(32000, 2, 1024, AUDIO_F32SYS, &audio_callback);
 	SDL_Event event;
 	SDL_Window * window = SDL_CreateWindow("Cave of Grell", 100, 200,
 		window_w, window_h, SDL_WINDOW_RESIZABLE);
@@ -147,6 +155,8 @@ int main(int argc, char* args[]) {
 			for (int j = 0; j < 8; j++) {
 				if (i != j) {
 					if (collision_detection(ents[i].rect, ents[j].rect)) {
+						audio_amp = 0.3f;
+						audio_hertz = (float) ((rand() % 420) + 80) / 32000.f;
 						ents[i].x_dir = -ents[i].x_dir;
 						ents[i].y_dir = -ents[i].y_dir;
 					}
