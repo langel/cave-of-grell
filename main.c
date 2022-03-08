@@ -7,8 +7,8 @@
 #include "lib/generic.c"
 #include "lib/fonts.c"
 
-int texture_w = 420;
-int texture_h = 200;
+int video_w = 420;
+int video_h = 200;
 int window_w = 1280;
 int window_h = 720;
 
@@ -31,44 +31,20 @@ int main(int argc, char* args[]) {
 	SDL_Renderer * renderer = SDL_CreateRenderer(window,
 		-1, SDL_RENDERER_PRESENTVSYNC);
 
-	for (int i = 0; i < 8; i++) {
-		uint32_t color = 0;
-		color += sdl_palette[i].r << 24;
-		color += sdl_palette[i].g << 16;
-		color += sdl_palette[i].b << 8;
-		color += 255;
-		surface_palette[i] = color;
-	}
-
+	// setup grafx
+	grafx_init();
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
-	uint32_t * pixels = malloc(texture_w * texture_h * 4);
-	SDL_Texture * bg_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STREAMING, texture_w, texture_h);
-	// dirt floor
-	for (int x = 0; x < texture_w; x++) {
-		for (int y = 0; y < texture_h; y++) {
-			int color_id = (rng8() & rng8() & rng8() & rng8() & rng8() & 13) ? 5 : 7;
-			pixels[x + y * texture_w] = surface_palette[color_id];
-		}
-	}
-	// wall tiles
-	for (int x = 0; x < texture_w; x += 10) {
-		plot_wall_tile(pixels, x, 0);
-		plot_wall_tile(pixels, x, 190);
-	}
-	for (int y = 10; y < texture_h - 10; y += 10) {
-		plot_wall_tile(pixels, 0, y);
-		plot_wall_tile(pixels, 410, y);
-	}
-	SDL_UpdateTexture(bg_texture, NULL, pixels, texture_w * 4);
+	SDL_Rect playfield_rect = { 0, 0, 320, 200 };
+	SDL_Texture * bg_texture = grafx_playfield_render(playfield_rect, renderer);
 	
-	SDL_Texture * vid_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, texture_w, texture_h);
+	SDL_Texture * vid_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, video_w, video_h);
 
 	// setup ents
 	ent ents[ENTS_COUNT];
-	ents_init(ents, renderer);
+	ents_init(ents, renderer, playfield_rect);
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
-	SDL_Texture * overscale_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, texture_w * 3, texture_h * 3);
+	SDL_Texture * overscale_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, video_w * 3, video_h * 3);
 
 	int running = 1;
 	int frame_counter = 0;
@@ -83,11 +59,11 @@ int main(int argc, char* args[]) {
 		SDL_SetRenderTarget(renderer, vid_texture);
 //		SDL_RenderClear(renderer);
 		// background refresh
-		SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
+		SDL_RenderCopy(renderer, bg_texture, NULL, &playfield_rect);
 //		SDL_RenderCopy(renderer, font00.texture, NULL, &font00.shit_rect);
 		SDL_RenderCopy(renderer, lorum.texture, NULL, &lorum.rect);
 		// sprites
-		ents_update(ents);
+		ents_update(ents, playfield_rect);
 		ents_render(ents, renderer);
 //		SDL_RenderCopy(renderer, font00.texture, NULL, NULL);
 		// "shader effects" xD

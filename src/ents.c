@@ -30,10 +30,10 @@ float ents_rnd_direction() {
 	return (float) ((rand() % 200) - 100) * 0.025f;
 }
 
-void ents_init(ent ents[], SDL_Renderer * renderer) {
+void ents_init(ent ents[], SDL_Renderer * renderer, SDL_Rect rect) {
 	for (int i = 0; i < ENTS_COUNT; i++) {
-		ents[i].x = rand() % 320 + 50;
-		ents[i].y = rand() % 100 + 50;
+		ents[i].x = 10 + (rand() % (rect.w - 30));
+		ents[i].y = 10 + (rand() % (rect.h - 30));
 		ents[i].x_dir = ents_rnd_direction();
 		ents[i].y_dir = ents_rnd_direction();
 		// XXX maybe move textures to another function
@@ -53,13 +53,13 @@ void ents_init(ent ents[], SDL_Renderer * renderer) {
 	}
 }
 
-void ents_update(ent ents[]) {
+void ents_update(ent ents[], SDL_Rect rect) {
 	ents_bubble_sort(ents);
 	for (int i = 0; i < ENTS_COUNT; i++) {
 		if (ents[i].base_rect.x < 11) ents[i].x_dir = abs(ents_rnd_direction());
-		if (ents[i].base_rect.x > 389) ents[i].x_dir = -abs(ents_rnd_direction());
+		if (ents[i].base_rect.x > rect.w - 31) ents[i].x_dir = -abs(ents_rnd_direction());
 		if (ents[i].base_rect.y < 11) ents[i].y_dir = abs(ents_rnd_direction());
-		if (ents[i].base_rect.y > 184) ents[i].y_dir = -abs(ents_rnd_direction());
+		if (ents[i].base_rect.y > rect.h - 16) ents[i].y_dir = -abs(ents_rnd_direction());
 		for (int j = 0; j < 8; j++) {
 			if (i != j) {
 				if (collision_detection(ents[i].base_rect, ents[j].base_rect)) {

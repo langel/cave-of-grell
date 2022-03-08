@@ -54,9 +54,9 @@ font fonts_load(char *name, int size, SDL_Renderer * renderer) {
 	f.width = buffer[8];
 	f.height = buffer[12];
 	int first_char = buffer[16];
-	int header_offset = 17;
-	for (int i = first_char; i < bytes_read - header_offset; i++) {
-		int width = buffer[i + header_offset];
+	int header_length = 17;
+	for (int i = first_char; i < bytes_read - header_length; i++) {
+		int width = buffer[i + header_length];
 //		width = size;
 		if (x + f.width > 255) {
 			x = 0;
