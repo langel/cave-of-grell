@@ -5,21 +5,24 @@ typedef struct {
 	int size;
 	int width;
 	int height;
+	int color;
 	SDL_Rect char_rect[FONT_MAX_LEN];
 	SDL_Rect shit_rect;
 	SDL_Texture * texture;
-} font;
-
-typedef struct {
-	SDL_Rect rect;
-	SDL_Texture * texture;
-} font_text_rendered;
+} font_struct;
 
 
-font fonts_load(char *name, int size, SDL_Renderer * renderer) {
-	font f;
+void font_set_color(int color_id, font_struct f) {
+	f.color = color_id;
+	SDL_SetTextureColorMod(f.texture, sdl_palette[color_id].r, sdl_palette[color_id].g, sdl_palette[color_id].b);
+}
+
+
+
+font_struct font_load(char *name, int size, SDL_Renderer * renderer) {
+	font_struct f;
 	f.size = size;
-	char filename[] = "fonts/";
+	char filename[64] = "fonts/";
 	strcat(filename, name);
 	printf("loading : %s\n", filename);
 	// load graphic
@@ -72,26 +75,22 @@ font fonts_load(char *name, int size, SDL_Renderer * renderer) {
 	}
 	fclose(data_file);
 	printf("\n\nx, y, 1st_char : %d, %d, %d\n", f.width, f.height, first_char);
+	font_set_color(0, f);
 	return f;
 }
 
-font_text_rendered fonts_render_text(char *text, font f, SDL_Renderer * renderer) {
+// target texture must be defined before calling
+void font_render_text(char *text, font_struct f, SDL_Renderer * renderer, SDL_Rect rect) {
 	int length = strlen(text);
-	SDL_Texture * output = texture_create_generic(renderer, length * f.width, f.height);
-	SDL_SetRenderTarget(renderer, output);
 	SDL_Rect char_buff = { 0, 0, f.width, f.height };
+	char_buff = rect;
 	for (int i = 0; i < length; i++) {
 		int char_id = (int) text[i];
-		printf(" %3d ", char_id);
+	//	printf(" %3d ", char_id);
 		int width = f.char_rect[char_id].w;
 		char_buff.w = width;
 		SDL_RenderCopy(renderer, f.texture, &f.char_rect[char_id], &char_buff);
 		char_buff.x += width;
 	}
-	font_text_rendered render;
-	render.texture = output;
-	SDL_QueryTexture(render.texture, NULL, NULL, &render.rect.w, &render.rect.h);
-	printf("\n render w, h : %d, %d\n", render.rect.w, render.rect.h);
-	render.rect.x = render.rect.y = 0;
-	return render;
 }
+
