@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <SDL2/SDL.h>
 #include "lib/debug.c"
+#include "lib/generic.c"
+#include "lib/fonts.c"
 
 int texture_w = 420;
 int texture_h = 200;
@@ -14,78 +17,9 @@ float audio_hertz = 0.f;
 float audio_phase = 0.f;
 #include "lib/audio.c"
 
-SDL_Color sdl_palette[8] = {
-	{ 0xf0, 0xf0, 0xdc, 0xff }, // 0 white
-	{ 0xfa, 0xc8, 0x00, 0xff }, // 1 yellow
-	{ 0x10, 0xc8, 0x40, 0xff }, // 2 green
-	{ 0x00, 0xa0, 0xc8, 0xff }, // 3 blue
-	{ 0xd2, 0x40, 0x40, 0xff }, // 4 red
-	{ 0xa0, 0x69, 0x4b, 0xff }, // 5 brown
-	{ 0x73, 0x64, 0x64, 0xff }, // 6 grey
-	{ 0x10, 0x18, 0x20, 0xff }, // 7 black
-};
 
-uint32_t surface_palette[8];
+#include "src/core.c"
 
-void set_render_color(SDL_Renderer * renderer, int color_id) {
-		SDL_SetRenderDrawColor(renderer, sdl_palette[color_id].r, sdl_palette[color_id].g, sdl_palette[color_id].b, sdl_palette[color_id].a);
-}
-
-typedef struct {
-	float x;
-	float y;
-	float x_dir;
-	float y_dir;
-	SDL_Texture * texture;
-	SDL_Rect rect;
-} ent;
-
-ent ents[8];
-
-void ents_bubble_sort(ent ents[]) {
-	// draw lower y axis ents first
-	int size = sizeof *ents / sizeof ents[0];
-	for (int step = 0; step < size - 1; ++step) {
-		for (int i = 0; i < size - step - 1; ++i) {
-			if (ents[i].y > ents[i + 1].y) {
-				ent temp = ents[i];
-				ents[i] = ents[i + 1];
-				ents[i + 1] = temp;
-			}
-		}
-	}
-}
-
-int collision_detection(SDL_Rect a, SDL_Rect b) {
-	if (a.x + a.w < b.x) return 0;
-	if (a.x > b.x + b.w) return 0;
-	if (a.y + a.h < b.y) return 0;
-	if (a.y > b.y + b.h) return 0;
-	return 1;
-}
-
-int rng8() {
-	static uint8_t val = 1;
-	int carry = val & 1;
-	val >>= 1;
-	if (carry) val ^= 0xd4;
-	return (int) val;
-}
-
-float rnd_direction() {
-	return (float) ((rand() % 200) - 100) * 0.025f;
-}
-
-void plot_wall_tile(uint32_t pixels[], int x, int y) {
-	int colors[4] = { 0, 5, 6, 7 };
-
-	for (int x2 = 0; x2 < 10; x2++) {
-		for (int y2 = 0; y2 < 10; y2++) {
-			int color_id = colors[rng8() & 3];
-			pixels[x + x2 + (y + y2) * texture_w] = surface_palette[color_id];
-		}
-	}
-}
 
 int main(int argc, char* args[]) {
 
@@ -130,29 +64,19 @@ int main(int argc, char* args[]) {
 	SDL_Texture * vid_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, texture_w, texture_h);
 
 	// setup ents
-	for (int i = 0; i < 8; i++) {
-		ents[i].x = rand() % 320 + 50;
-		ents[i].y = rand() % 100 + 50;
-		ents[i].x_dir = rnd_direction();
-		ents[i].y_dir = rnd_direction();
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		ents[i].texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 20, 20);
-		SDL_SetRenderTarget(renderer, ents[i].texture);
-		SDL_RenderFillRect(renderer, NULL);
-		SDL_SetTextureColorMod(ents[i].texture, sdl_palette[i].r, sdl_palette[i].g, sdl_palette[i].b);
-		ents[i].rect.x = ents[i].x;
-		ents[i].rect.y = ents[i].y;
-		ents[i].rect.w = 20;
-		ents[i].rect.h = 20;
-		//SDL_SetRenderTarget(renderer, ents[i].texture);
-		//set_render_color(renderer, i);
-		//SDL_RenderClear(renderer);
-	}
+	ent ents[ENTS_COUNT];
+	ents_init(ents, renderer);
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
 	SDL_Texture * overscale_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, texture_w * 3, texture_h * 3);
 
 	int running = 1;
+	int frame_counter = 0;
+
+	font font00 = fonts_load("font00_14x14", 14, renderer);
+//	SDL_Texture * lorum = fonts_render_text("Lorum ipsum", font00, renderer);
+	font_text_rendered lorum = fonts_render_text(" !'#0123456789 Lorum Ipsum @ ABCDEFGHIJKLMNOP", font00, renderer);
+	lorum.rect.y = 185;
 
 	while (running) {
 
@@ -160,35 +84,23 @@ int main(int argc, char* args[]) {
 //		SDL_RenderClear(renderer);
 		// background refresh
 		SDL_RenderCopy(renderer, bg_texture, NULL, NULL);
+//		SDL_RenderCopy(renderer, font00.texture, NULL, &font00.shit_rect);
+		SDL_RenderCopy(renderer, lorum.texture, NULL, &lorum.rect);
 		// sprites
-		ents_bubble_sort(ents);
-		for (int i = 0; i < 8; i++) {
-			if (ents[i].x < 11) ents[i].x_dir = abs(rnd_direction());
-			if (ents[i].x > 389) ents[i].x_dir = -abs(rnd_direction());
-			if (ents[i].y < 11) ents[i].y_dir = abs(rnd_direction());
-			if (ents[i].y > 169) ents[i].y_dir = -abs(rnd_direction());
-			for (int j = 0; j < 8; j++) {
-				if (i != j) {
-					if (collision_detection(ents[i].rect, ents[j].rect)) {
-						audio_amp = 0.025f;
-						audio_hertz = (float) ((rand() % 420) + 80) / 32000.f;
-						ents[i].x_dir = -ents[i].x_dir;
-						ents[i].y_dir = -ents[i].y_dir;
-					}
-				}
-			}
-			ents[i].x += ents[i].x_dir;
-			ents[i].rect.x = ents[i].x;
-			ents[i].y += ents[i].y_dir;
-			ents[i].rect.y = ents[i].y;
-			SDL_RenderCopy(renderer, ents[i].texture, NULL, &ents[i].rect);
-		}
+		ents_update(ents);
+		ents_render(ents, renderer);
+//		SDL_RenderCopy(renderer, font00.texture, NULL, NULL);
 		// "shader effects" xD
 		SDL_SetRenderTarget(renderer, overscale_texture);
 		SDL_RenderCopy(renderer, vid_texture, NULL, NULL);
 		SDL_SetRenderTarget(renderer, NULL);
 		SDL_RenderCopy(renderer, overscale_texture, NULL, NULL);
 		SDL_RenderPresent(renderer);
+
+		frame_counter++;
+		if (frame_counter % 60 == 0) {
+//			printf("%f\n", ents[0].x);
+		}
 
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
