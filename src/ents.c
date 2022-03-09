@@ -8,7 +8,7 @@ typedef struct {
 	int collisions;
 } ent;
 
-#define ENTS_COUNT 32
+#define ENTS_COUNT 8
 
 #define ent_state_dormant 0
 #define ent_state_wandering 1
@@ -50,6 +50,12 @@ void ents_init(ent ents[], SDL_Renderer * renderer, SDL_Rect rect) {
 	}
 }
 
+int ents_space_free(ent ents[], int x, int y) {
+	for (int i = 0; i < ENTS_COUNT; i++) {
+		if (ents[i].xt == x && ents[i].yt == y) return 0;
+	}
+	return 1;
+}
 
 void ents_update(ent ents[], SDL_Rect rect) {
 
@@ -63,22 +69,27 @@ void ents_update(ent ents[], SDL_Rect rect) {
 		}
 		else if (e.state == ent_state_wandering && frame_counter % 10 == 0) {
 			if (e.dir == 0) { // right
-				if (map_data[0][e.xt+1][e.yt] == 0) e.xt++;
+				if (map_data[0][e.xt + 1][e.yt] == 0 
+					&& ents_space_free(ents, e.xt+1, e.yt)) e.xt++;
 				else e.state = ent_state_blocked;
 			}
 			if (e.dir == 1) { // up
-				if (map_data[0][e.xt][e.yt-1] == 0) e.yt--;
+				if (map_data[0][e.xt][e.yt - 1] == 0
+					&& ents_space_free(ents, e.xt, e.yt - 1)) e.yt--;
 				else e.state = ent_state_blocked;
 			}
 			if (e.dir == 2) { //left
-				if (map_data[0][e.xt-1][e.yt] == 0) e.xt--;
+				if (map_data[0][e.xt-1][e.yt] == 0
+					&& ents_space_free(ents, e.xt - 1, e.yt)) e.xt--;
 				else e.state = ent_state_blocked;
 			}
-			if (e.dir == 3) { // right
-				if (map_data[0][e.xt][e.yt+1] == 0) e.yt++;
+			if (e.dir == 3) { // down
+				if (map_data[0][e.xt][e.yt + 1] == 0
+					&& ents_space_free(ents, e.xt, e.yt + 1)) e.yt++;
 				else e.state = ent_state_blocked;
 			}
 		}
+		if (rand() % 27 == 0) e.state = ent_state_blocked;
 
 		ents[i] = e;
 	}

@@ -27,8 +27,8 @@ void grafx_init(SDL_Renderer * renderer) {
 		surface_palette[i] = color;
 	}
 	// load the spriteshit
-	SDL_Surface * image = SDL_LoadBMP("assets/spriteshit.bmp");
-	SDL_SetColorKey(image, SDL_TRUE, SDL_MapRGB(image->format, 207, 0 , 255)); 
+	SDL_Surface * image = SDL_LoadBMP("assets/spriteshit2.bmp");
+	SDL_SetColorKey(image, SDL_TRUE, SDL_MapRGB(image->format, 0, 0, 0)); 
 	spriteshit = SDL_CreateTextureFromSurface(renderer, image);
 	SDL_FreeSurface(image);
 	// debug layer
