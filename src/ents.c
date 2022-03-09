@@ -1,15 +1,10 @@
 
 typedef struct {
 	int ent_type;
-	float x; // bottom middle of sprite
-	float y; // bottom middle of sprite
-	float x_dir;
-	float y_dir;
 	int dir; // right, up, left, down
 	int xt; // tile positions
 	int yt;
 	int state;
-	SDL_Rect base;
 	int collisions;
 } ent;
 
@@ -40,10 +35,6 @@ float ents_rnd_direction() {
 void ents_init(ent ents[], SDL_Renderer * renderer, SDL_Rect rect) {
 	for (int i = 0; i < ENTS_COUNT; i++) {
 		printf("init ent %d \n", i);
-		ents[i].x = 10 + (rand() % (rect.w - 30));
-		ents[i].y = 10 + (rand() % (rect.h - 30));
-		ents[i].x_dir = ents_rnd_direction();
-		ents[i].y_dir = ents_rnd_direction();
 		ents[i].ent_type = (i < ENTS_COUNT / 2) ? ent_giantgnome : ent_owlbear;
 		ents[i].dir = rand() % 4;
 		ents[i].xt = ents[i].yt = 0;
@@ -53,10 +44,6 @@ void ents_init(ent ents[], SDL_Renderer * renderer, SDL_Rect rect) {
 			printf("%d , %d \n", ents[i].xt, ents[i].yt);
 		}
 		ents[i].state = ent_state_wandering;
-		//ents[i].base_rect.x = ents[i].sprite_rect.x;
-		//ents[i].base_rect.y = ents[i].sprite_rect.y + 15;
-		ents[i].base.w = 20;
-		ents[i].base.h = 5;
 		ents[i].collisions = 0;
 		char coll[10];
 		sprintf(coll, "%d", ents[i].collisions);
@@ -69,11 +56,6 @@ void ents_update(ent ents[], SDL_Rect rect) {
 	for (int i = 0; i < ENTS_COUNT; i++) {
 		ent e = ents[i];
 		SDL_Rect spr = ent_sprites[e.ent_type];
-		SDL_Rect base = {
-			(int) (e.x - spr.w / 2),
-			(int) e.y - 5,
-			spr.w, 5
-		};
 
 		if (e.state == ent_state_blocked) {
 			e.state = ent_state_wandering;
@@ -98,7 +80,6 @@ void ents_update(ent ents[], SDL_Rect rect) {
 			}
 		}
 
-		e.base = base;
 		ents[i] = e;
 	}
 }

@@ -75,7 +75,7 @@ int main(int argc, char* args[]) {
 		SDL_Rect ent_label_fill = { 332, 34, 28, 6 };
 		SDL_Rect ent_label_text = { 380, 30, 28, font00.height };
 		font_set_color(font00, sdl_palette[0]);
-		for (int i = 0; i < ENTS_COUNT; i++) {
+		for (int i = 0; i < 8; i++) {
 			// ent border
 			set_render_color(renderer, 0);
 			SDL_RenderDrawRect(renderer, &ent_label_border);
