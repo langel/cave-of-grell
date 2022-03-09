@@ -15,7 +15,8 @@ void map_init() {
 		map_data[0][0][y] = 1;
 		map_data[0][31][y] = 1;
 	}
-	for (int i = 0; i < 16; i++) {
+	// add some noise
+	for (int i = 0; i < 64; i++) {
 		int x = rand() % 32;
 		int y = rand() % 20;
 		map_data[0][x][y] = 1;

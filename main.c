@@ -11,6 +11,7 @@ int video_w = 420;
 int video_h = 200;
 int window_w = 1280;
 int window_h = 720;
+int frame_counter = 0;
 
 float audio_amp = 0.f;
 float audio_hertz = 0.f;
@@ -53,7 +54,6 @@ int main(int argc, char* args[]) {
 	SDL_Texture * overscale_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, video_w * 3, video_h * 3);
 
 	int running = 1;
-	int frame_counter = 0;
 
 
 	while (running) {

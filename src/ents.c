@@ -5,19 +5,26 @@ typedef struct {
 	float y; // bottom middle of sprite
 	float x_dir;
 	float y_dir;
+	int dir; // right, up, left, down
+	int xt; // tile positions
+	int yt;
+	int state;
 	SDL_Rect base;
 	int collisions;
 } ent;
 
-#define ENTS_COUNT 8
+#define ENTS_COUNT 32
 
+#define ent_state_dormant 0
+#define ent_state_wandering 1
+#define ent_state_blocked 2
 
 void ents_bubble_sort(ent ents[], int ents_sort[]) {
 	// draw lower y axis ents first
 	int size = ENTS_COUNT;
 	for (int step = 0; step < size - 1; ++step) {
 		for (int i = 0; i < size - step - 1; ++i) {
-			if (ents[ents_sort[i]].y > ents[ents_sort[i + 1]].y) {
+			if (ents[ents_sort[i]].yt > ents[ents_sort[i + 1]].yt) {
 				int temp = ents_sort[i];
 				ents_sort[i] = ents_sort[i + 1];
 				ents_sort[i + 1] = temp;
@@ -32,12 +39,20 @@ float ents_rnd_direction() {
 
 void ents_init(ent ents[], SDL_Renderer * renderer, SDL_Rect rect) {
 	for (int i = 0; i < ENTS_COUNT; i++) {
+		printf("init ent %d \n", i);
 		ents[i].x = 10 + (rand() % (rect.w - 30));
 		ents[i].y = 10 + (rand() % (rect.h - 30));
 		ents[i].x_dir = ents_rnd_direction();
 		ents[i].y_dir = ents_rnd_direction();
 		ents[i].ent_type = (i < ENTS_COUNT / 2) ? ent_giantgnome : ent_owlbear;
-
+		ents[i].dir = rand() % 4;
+		ents[i].xt = ents[i].yt = 0;
+		while (map_data[0][ents[i].xt][ents[i].yt] != 0) {
+			ents[i].xt = rand() % 32;
+			ents[i].yt = rand() % 20;
+			printf("%d , %d \n", ents[i].xt, ents[i].yt);
+		}
+		ents[i].state = ent_state_wandering;
 		//ents[i].base_rect.x = ents[i].sprite_rect.x;
 		//ents[i].base_rect.y = ents[i].sprite_rect.y + 15;
 		ents[i].base.w = 20;
@@ -59,28 +74,30 @@ void ents_update(ent ents[], SDL_Rect rect) {
 			(int) e.y - 5,
 			spr.w, 5
 		};
-		int wall_collide = 0;
-		for (int x = e.base.x; x < e.base.x + e.base.w; x += 10) {
-			for (int y = e.base.y; y < e.base.y + e.base.h; y += 10) {
-				if (x > 0 && y > 0) {
-				/*
-					if (map_data[0][x/10][y/10] != 0) {
-						wall_collide++;
-					}
-					*/
-				}
+
+		if (e.state == ent_state_blocked) {
+			e.state = ent_state_wandering;
+			e.dir = rand() % 4;
+		}
+		else if (e.state == ent_state_wandering && frame_counter % 10 == 0) {
+			if (e.dir == 0) { // right
+				if (map_data[0][e.xt+1][e.yt] == 0) e.xt++;
+				else e.state = ent_state_blocked;
+			}
+			if (e.dir == 1) { // up
+				if (map_data[0][e.xt][e.yt-1] == 0) e.yt--;
+				else e.state = ent_state_blocked;
+			}
+			if (e.dir == 2) { //left
+				if (map_data[0][e.xt-1][e.yt] == 0) e.xt--;
+				else e.state = ent_state_blocked;
+			}
+			if (e.dir == 3) { // right
+				if (map_data[0][e.xt][e.yt+1] == 0) e.yt++;
+				else e.state = ent_state_blocked;
 			}
 		}
-		if (e.x < 10) e.x_dir = -e.x_dir;
-		if (e.x > 300) e.x_dir = -e.x_dir;
-		if (e.y < 10) e.y_dir = -e.y_dir;
-		if (e.y > 180) e.y_dir = -e.y_dir;
-		if (wall_collide) {
-			e.x_dir = -e.x_dir;
-			e.y_dir = -e.y_dir;
-		}
-		e.x += e.x_dir;
-		e.y += e.y_dir;
+
 		e.base = base;
 		ents[i] = e;
 	}
@@ -92,36 +109,13 @@ void ents_render(ent ents[], SDL_Renderer * renderer) {
 	for (int i = 0; i < ENTS_COUNT; i++) ents_sorted[i] = i;
 	ents_bubble_sort(ents, ents_sorted);
 	for (int i = 0; i < ENTS_COUNT; i++) {
-//		SDL_RenderCopy(renderer, ents[ents_sorted[i]].texture, NULL, &ents[ents_sorted[i]].sprite_rect);
 		ent e = ents[ents_sorted[i]];
 		SDL_Rect spr_rect = ent_sprites[e.ent_type];
 		SDL_Rect rect = { 
-			(int) (e.x - spr_rect.w / 2),
-			(int) (e.y - spr_rect.h),
+			(int) (e.xt * 10 + 5 - spr_rect.w / 2),
+			(int) (e.yt * 10 + 8 - spr_rect.h),
 			spr_rect.w, spr_rect.h
 		};
-		set_render_color(renderer, 1);
-		SDL_Rect tile;
-		tile = (SDL_Rect) { 
-			(e.base.x / 10) * 10,
-			(e.base.y / 10) * 10,
-			10, 10 };
-		SDL_RenderDrawRect(renderer, &tile);
-		tile = (SDL_Rect) { 
-			((e.base.x + e.base.w) / 10) * 10,
-			(e.base.y / 10) * 10,
-			10, 10 };
-		SDL_RenderDrawRect(renderer, &tile);
-		tile = (SDL_Rect) { 
-			(e.base.x / 10) * 10,
-			((e.base.y + e.base.h) / 10) * 10,
-			10, 10 };
-		SDL_RenderDrawRect(renderer, &tile);
-		tile = (SDL_Rect) { 
-			((e.base.x + e.base.w) / 10) * 10,
-			((e.base.y + e.base.h) / 10) * 10,
-			10, 10 };
-		SDL_RenderDrawRect(renderer, &tile);
 		SDL_RenderCopy(renderer, spriteshit, &spr_rect, &rect);
 	}
 }
