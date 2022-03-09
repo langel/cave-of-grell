@@ -69,23 +69,31 @@ void ents_update(ent ents[], SDL_Rect rect) {
 		}
 		else if (e.state == ent_state_wandering && frame_counter % 10 == 0) {
 			if (e.dir == 0) { // right
-				if (map_data[0][e.xt + 1][e.yt] == 0 
-					&& ents_space_free(ents, e.xt+1, e.yt)) e.xt++;
+				if (map_data[0][e.xt + 1][e.yt] == 0) {
+					if (ents_space_free(ents, e.xt+1, e.yt)) e.xt++;
+					else e.collisions++;
+				}
 				else e.state = ent_state_blocked;
 			}
 			if (e.dir == 1) { // up
-				if (map_data[0][e.xt][e.yt - 1] == 0
-					&& ents_space_free(ents, e.xt, e.yt - 1)) e.yt--;
+				if (map_data[0][e.xt][e.yt - 1] == 0) {
+					if (ents_space_free(ents, e.xt, e.yt - 1)) e.yt--;
+					else e.collisions++;
+				}
 				else e.state = ent_state_blocked;
 			}
 			if (e.dir == 2) { //left
-				if (map_data[0][e.xt-1][e.yt] == 0
-					&& ents_space_free(ents, e.xt - 1, e.yt)) e.xt--;
+				if (map_data[0][e.xt-1][e.yt] == 0) {
+					if (ents_space_free(ents, e.xt - 1, e.yt)) e.xt--;
+					else e.collisions++;
+				}
 				else e.state = ent_state_blocked;
 			}
 			if (e.dir == 3) { // down
-				if (map_data[0][e.xt][e.yt + 1] == 0
-					&& ents_space_free(ents, e.xt, e.yt + 1)) e.yt++;
+				if (map_data[0][e.xt][e.yt + 1] == 0) {
+					if (ents_space_free(ents, e.xt, e.yt + 1)) e.yt++;
+					else e.collisions++;
+				}
 				else e.state = ent_state_blocked;
 			}
 		}
@@ -108,6 +116,11 @@ void ents_render(ent ents[], SDL_Renderer * renderer) {
 			(int) (e.yt * 10 + 8 - spr_rect.h),
 			spr_rect.w, spr_rect.h
 		};
+		set_render_color(renderer, ents_sorted[i]);
+		SDL_Rect colorbox = {
+			rect.x, rect.y + rect.h - 5, rect.w, 5
+		};
+		SDL_RenderFillRect(renderer, &colorbox);
 		SDL_RenderCopy(renderer, spriteshit, &spr_rect, &rect);
 	}
 }

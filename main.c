@@ -91,6 +91,14 @@ int main(int argc, char* args[]) {
 			ent_label_text.y += 20;
 		}
 //		SDL_RenderCopy(renderer, font00.texture, NULL, NULL);
+		// add noise
+		/*
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 1);
+		for (int i = 0; i < 25600; i++) {
+			SDL_Rect pixel = { rand() % video_w, rand() % video_h, 1, 1 };
+			SDL_RenderDrawRect(renderer, &pixel);
+		}
+		*/
 		// "shader effects" xD
 		SDL_SetRenderTarget(renderer, overscale_texture);
 		SDL_RenderCopy(renderer, vid_texture, NULL, NULL);
