@@ -4,6 +4,7 @@
 #include <math.h>
 #include <SDL2/SDL.h>
 #include "lib/debug.c"
+#include "lib/font.c"
 #include "lib/generic.c"
 
 int video_w = 420;
@@ -18,7 +19,6 @@ float audio_phase = 0.f;
 
 
 #include "src/core.c"
-#include "lib/font.c"
 
 
 int main(int argc, char* args[]) {
@@ -32,11 +32,12 @@ int main(int argc, char* args[]) {
 		-1, SDL_RENDERER_PRESENTVSYNC);
 
 	// setup grafx
-	grafx_init();
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
+	grafx_init(renderer);
 	SDL_Rect video_rect = { 0, 0, video_w, video_h };
 	SDL_Rect playfield_rect = { 0, 0, 320, 200 };
-	SDL_Texture * bg_texture = grafx_playfield_render(playfield_rect, renderer);
+	map_init();
+	map_playfield_render(playfield_rect, renderer);
 	
 	SDL_Texture * vid_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, video_w, video_h);
 
@@ -56,23 +57,24 @@ int main(int argc, char* args[]) {
 
 
 	while (running) {
-
 		SDL_SetRenderTarget(renderer, vid_texture);
 		set_render_color(renderer, 7);
 		SDL_RenderFillRect(renderer, &video_rect);
 		// background refresh
-		SDL_RenderCopy(renderer, bg_texture, NULL, &playfield_rect);
+		SDL_RenderCopy(renderer, map_texture[0], NULL, &playfield_rect);
 //		SDL_RenderCopy(renderer, font00.texture, NULL, &font00.shit_rect);
+		// debug
+		SDL_RenderCopy(renderer, debug, NULL, NULL);
 		// sprites
 		ents_update(ents, playfield_rect);
 		ents_render(ents, renderer);
 		// hud
-		font_set_color(1, font00);
+		font_set_color(font00, sdl_palette[1]);
 		font_render_text("Cave of Grell #7DRL", font00, renderer, text_title);
 		SDL_Rect ent_label_border = { 330, 32, 32, 10 };
 		SDL_Rect ent_label_fill = { 332, 34, 28, 6 };
 		SDL_Rect ent_label_text = { 380, 30, 28, font00.height };
-		font_set_color(0, font00);
+		font_set_color(font00, sdl_palette[0]);
 		for (int i = 0; i < ENTS_COUNT; i++) {
 			// ent border
 			set_render_color(renderer, 0);

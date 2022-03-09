@@ -5,16 +5,14 @@ typedef struct {
 	int size;
 	int width;
 	int height;
-	int color;
 	SDL_Rect char_rect[FONT_MAX_LEN];
 	SDL_Rect shit_rect;
 	SDL_Texture * texture;
 } font_struct;
 
 
-void font_set_color(int color_id, font_struct f) {
-	f.color = color_id;
-	SDL_SetTextureColorMod(f.texture, sdl_palette[color_id].r, sdl_palette[color_id].g, sdl_palette[color_id].b);
+void font_set_color(font_struct f, SDL_Color color) {
+	SDL_SetTextureColorMod(f.texture, color.r, color.g, color.b);
 }
 
 
@@ -75,7 +73,6 @@ font_struct font_load(char *name, int size, SDL_Renderer * renderer) {
 	}
 	fclose(data_file);
 	printf("\n\nx, y, 1st_char : %d, %d, %d\n", f.width, f.height, first_char);
-	font_set_color(0, f);
 	return f;
 }
 
