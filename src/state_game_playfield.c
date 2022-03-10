@@ -31,9 +31,37 @@ void state_game_playfield_frame() {
 
 	camera_rect.x = (ents[0].xt - 16) * 10;
 	camera_rect.y = (ents[0].yt - 10) * 10;
+
+	// handle out of bounds camera positions
+	int map_px_w = map_width * 10;
+	int map_px_h = map_height * 10;
+	SDL_Rect oob_cam = { 0, 0, camera_rect.w, camera_rect.h };
+	SDL_Rect oob_field = { 0, 0, playfield_rect.w, playfield_rect.h };
+	if (camera_rect.x < 0) {
+		oob_cam.x = 0;
+		oob_field.x = abs(camera_rect.x);
+		oob_field.w = playfield_rect.w - oob_cam.x;
+	}
+	else if (camera_rect.x + camera_rect.w > map_px_w) {
+		oob_cam.x = map_px_w - camera_rect.w;
+	}
+	else {
+		oob_cam.x = camera_rect.x;
+	}
+	if (camera_rect.y < 0) {
+		oob_cam.y = 0;
+		oob_field.y = abs(camera_rect.y);
+		oob_field.h = playfield_rect.h - oob_cam.y;
+	}
+	else if (camera_rect.y + camera_rect.w > map_px_h) {
+		oob_cam.y = map_px_w - camera_rect.h;
+	}
+	else {
+		oob_cam.y = camera_rect.y;
+	}
 	
 	// background refresh
-	SDL_RenderCopy(renderer, map_texture[0], &camera_rect, &playfield_rect);
+	SDL_RenderCopy(renderer, map_texture[0], &oob_cam, &oob_field);
 
 	// sprites
 	ents_render(ents, renderer);
