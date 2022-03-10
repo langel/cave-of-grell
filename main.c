@@ -61,6 +61,7 @@ int main(int argc, char* args[]) {
 
 
 	while (running) {
+		uint64_t start = SDL_GetPerformanceCounter();
 		SDL_SetRenderTarget(renderer, vid_texture);
 		set_render_color(renderer, 7);
 		SDL_RenderFillRect(renderer, &video_rect);
@@ -77,6 +78,10 @@ int main(int argc, char* args[]) {
 		if (frame_counter % 60 == 0) {
 //			printf("%f\n", ents[0].x);
 		}
+		// fps throttle
+		uint64_t end = SDL_GetPerformanceCounter();
+		float elapsed = (float) (end - start) / (float) SDL_GetPerformanceFrequency() * 1000.f;
+		SDL_Delay(floor(1000.f / 60.f - elapsed));
 
 	}
 
