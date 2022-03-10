@@ -9,6 +9,7 @@ typedef struct {
 } ent;
 
 #define ENTS_COUNT 8
+ent ents[ENTS_COUNT];
 
 #define ent_state_dormant 0
 #define ent_state_wandering 1
@@ -61,7 +62,6 @@ void ents_update(ent ents[], SDL_Rect rect) {
 
 	for (int i = 0; i < ENTS_COUNT; i++) {
 		ent e = ents[i];
-		SDL_Rect spr = ent_sprites[e.ent_type];
 
 		if (e.state == ent_state_blocked) {
 			e.state = ent_state_wandering;
@@ -116,11 +116,6 @@ void ents_render(ent ents[], SDL_Renderer * renderer) {
 			(int) (e.yt * 10 + 8 - spr_rect.h),
 			spr_rect.w, spr_rect.h
 		};
-		set_render_color(renderer, ents_sorted[i]);
-		SDL_Rect colorbox = {
-			rect.x, rect.y + rect.h - 5, rect.w, 5
-		};
-		SDL_RenderFillRect(renderer, &colorbox);
 		SDL_RenderCopy(renderer, spriteshit, &spr_rect, &rect);
 	}
 }

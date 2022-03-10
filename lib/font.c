@@ -1,3 +1,7 @@
+/*
+	designed around Codehead's Bitmap Font Generator
+*/
+
 
 #define FONT_MAX_LEN 512
 
