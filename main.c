@@ -50,9 +50,6 @@ int main(int argc, char* args[]) {
 	fonts[0] = font_load("font00_14x14", 14, renderer);
 	fonts[1] = font_load("font01_25x24", 24, renderer);
 
-	// setup ents
-	ents_init();
-
 	// initiallize all states
 	state_controller_init();
 
@@ -63,7 +60,7 @@ int main(int argc, char* args[]) {
 	while (running) {
 		uint64_t start = SDL_GetPerformanceCounter();
 		SDL_SetRenderTarget(renderer, vid_texture);
-		set_render_color(renderer, 7);
+		grafx_set_color(7);
 		SDL_RenderFillRect(renderer, &video_rect);
 		state_controller_frame(renderer);
 		// "shader effects" xD
@@ -81,7 +78,8 @@ int main(int argc, char* args[]) {
 		// fps throttle
 		uint64_t end = SDL_GetPerformanceCounter();
 		float elapsed = (float) (end - start) / (float) SDL_GetPerformanceFrequency() * 1000.f;
-		SDL_Delay(floor(1000.f / 60.f - elapsed));
+		// XXX crashes on windows
+		//SDL_Delay(floor(1000.f / 60.f - elapsed));
 
 	}
 

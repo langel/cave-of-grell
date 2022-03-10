@@ -1,7 +1,7 @@
 #include "./grafx.c"
 
-#include "./maps.c"
 #include "./map_gen.c"
+#include "./map_grafx.c"
 #include "./ent_data.c"
 #include "./ents.c"
 

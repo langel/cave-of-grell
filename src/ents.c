@@ -35,19 +35,19 @@ float ents_rnd_direction() {
 
 void ents_init() {
 	for (int i = 0; i < ENTS_COUNT; i++) {
-		printf("init ent %d \n", i);
+//		printf("init ent %d \n", i);
 		ents[i].ent_type = (i < ENTS_COUNT / 2) ? ent_giantgnome : ent_owlbear;
 		ents[i].dir = rand() % 4;
 		ents[i].xt = ents[i].yt = 0;
 		while (map_data[0][ents[i].xt][ents[i].yt] != 0) {
 			ents[i].xt = rand() % map_width;
 			ents[i].yt = rand() % map_height;
-			printf("%d , %d \n", ents[i].xt, ents[i].yt);
+//			printf("%d , %d \n", ents[i].xt, ents[i].yt);
 		}
 		ents[i].state = ent_state_wandering;
 		ents[i].collisions = 0;
 		char coll[10];
-		sprintf(coll, "%d", ents[i].collisions);
+//		sprintf(coll, "%d", ents[i].collisions);
 	}
 }
 

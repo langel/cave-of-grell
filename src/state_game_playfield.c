@@ -43,7 +43,10 @@ void state_game_playfield_frame() {
 		oob_field.w = playfield_rect.w - oob_cam.x;
 	}
 	else if (camera_rect.x + camera_rect.w > map_px_w) {
-		oob_cam.x = map_px_w - camera_rect.w;
+		//oob_cam.x = map_px_w - camera_rect.w;
+		//oob_field.w = map_px_w - camera_rect.x;
+		oob_cam.w = map_px_w - camera_rect.x;
+		oob_field.w = playfield_rect.w - oob_cam.w;
 	}
 	else {
 		oob_cam.x = camera_rect.x;
@@ -53,15 +56,16 @@ void state_game_playfield_frame() {
 		oob_field.y = abs(camera_rect.y);
 		oob_field.h = playfield_rect.h - oob_cam.y;
 	}
-	else if (camera_rect.y + camera_rect.w > map_px_h) {
-		oob_cam.y = map_px_w - camera_rect.h;
+	else if (camera_rect.y + camera_rect.h > map_px_h) {
+		oob_cam.h = map_px_h - camera_rect.y;
+		oob_field.h = playfield_rect.h - oob_cam.h;
 	}
 	else {
 		oob_cam.y = camera_rect.y;
 	}
 	
 	// background refresh
-	SDL_RenderCopy(renderer, map_texture[0], &oob_cam, &oob_field);
+	SDL_RenderCopy(renderer, map_texture, &oob_cam, &oob_field);
 
 	// sprites
 	ents_render(ents, renderer);

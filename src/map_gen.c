@@ -1,23 +1,31 @@
 
 
+// map matrix
+// map_data[level][row/x][col/y]
+
+#define map_levels 9
+#define map_width 128
+#define map_height 80
+
+int map_data[map_levels][map_width][map_height];
+
 int map_drawing_new = 0;
 int map_drawing_stage = 0;
 
+
 int cavity_centers[9][2]; // cavity id / x,y
 
-void map_draw_new(int map_level) {
+void map_gen_new(int map_level) {
 	
 	// fill map with rocks
-	if (map_drawing_stage == 0) {
-		printf("drawing level %d map\n", map_level);
-		for (int x = 0; x < map_width; x++) {
-			for (int y = 0; y < map_height; y++) {
-				map_data[map_level][x][y] = 1;
-			}
+	printf("drawing level %d map\n", map_level);
+	for (int x = 0; x < map_width; x++) {
+		for (int y = 0; y < map_height; y++) {
+			map_data[map_level][x][y] = 1;
 		}
 	}
 
-	if (map_drawing_stage > 0 && map_drawing_stage <= 9) {
+	for (int i = 0; i < 9; i++) {
 		SDL_Rect cavity;
 		cavity.w = (rand() % (map_width / 4)) + 4;
 		cavity.x = 2 + (rand() % (map_width - cavity.w - 4)); 
@@ -31,17 +39,17 @@ void map_draw_new(int map_level) {
 		}
 
 		// cache cavity center position
-		cavity_centers[map_drawing_stage - 1][0] = cavity.x + cavity.w / 2;
-		cavity_centers[map_drawing_stage - 1][1] = cavity.y + cavity.h / 2;
-		//printf("\nlevel %d cavity %d center x, y : %d, %d\n", map_level, map_drawing_stage, cavity_centers[map_drawing_stage - 1][0], cavity_centers[map_drawing_stage - 1][1]);
+		cavity_centers[i][0] = cavity.x + cavity.w / 2;
+		cavity_centers[i][1] = cavity.y + cavity.h / 2;
+		//printf("\nlevel %d cavity %d center x, y : %d, %d\n", map_level, map_drawing_stage, cavity_centers[i][0], cavity_centers[i][1]);
 
 		// corridor cut outs between cavities
-		if (map_drawing_stage > 1) {
-			int target = rand() % (map_drawing_stage - 1);
-			//printf("attaching cavity %d to cavity %d\n", map_drawing_stage - 1, target);
+		if (i > 0) {
+			int target = rand() % (i);
+			//printf("attaching cavity %d to cavity %d\n", i, target);
 			// current cavity
-			int ccx = cavity_centers[map_drawing_stage - 1][0];
-			int ccy = cavity_centers[map_drawing_stage - 1][1];
+			int ccx = cavity_centers[i][0];
+			int ccy = cavity_centers[i][1];
 			// target cavity
 			int tcx = cavity_centers[target][0];
 			int tcy = cavity_centers[target][1];
@@ -62,13 +70,4 @@ void map_draw_new(int map_level) {
 
 	}
 
-	map_drawing_stage++;
-
-	if (map_drawing_stage > 10) {
-		map_drawing_new = 0;
-		map_playfield_render();
-		ents_init();
-	}
-	
-	map_view_texture_update(map_level);
 }
