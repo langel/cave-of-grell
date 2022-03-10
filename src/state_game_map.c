@@ -2,6 +2,7 @@
 
 
 void state_game_map_init() {
+	map_drawing_new = 1;	
 	map_view_texture = texture_create_generic(renderer, map_width * 2, map_height * 2);
 	map_view_texture_update(0);
 }

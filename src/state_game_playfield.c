@@ -26,12 +26,16 @@ void state_game_playfield_init() {
 
 
 void state_game_playfield_frame() {
+
+	ents_update(ents, playfield_rect);
+
+	camera_rect.x = (ents[0].xt - 16) * 10;
+	camera_rect.y = (ents[0].yt - 10) * 10;
 	
 	// background refresh
-	SDL_RenderCopy(renderer, map_texture[0], &playfield_rect, &playfield_rect);
+	SDL_RenderCopy(renderer, map_texture[0], &camera_rect, &playfield_rect);
 
 	// sprites
-	ents_update(ents, playfield_rect);
 	ents_render(ents, renderer);
 
 }

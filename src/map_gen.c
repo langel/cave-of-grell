@@ -67,6 +67,7 @@ void map_draw_new(int map_level) {
 	if (map_drawing_stage > 10) {
 		map_drawing_new = 0;
 		map_playfield_render();
+		ents_init();
 	}
 	
 	map_view_texture_update(map_level);

@@ -8,7 +8,7 @@ typedef struct {
 	int collisions;
 } ent;
 
-#define ENTS_COUNT 8
+#define ENTS_COUNT 64
 ent ents[ENTS_COUNT];
 
 #define ent_state_dormant 0
@@ -33,15 +33,15 @@ float ents_rnd_direction() {
 	return (float) ((rand() % 200) - 100) * 0.005f;
 }
 
-void ents_init(ent ents[], SDL_Renderer * renderer, SDL_Rect rect) {
+void ents_init() {
 	for (int i = 0; i < ENTS_COUNT; i++) {
 		printf("init ent %d \n", i);
 		ents[i].ent_type = (i < ENTS_COUNT / 2) ? ent_giantgnome : ent_owlbear;
 		ents[i].dir = rand() % 4;
 		ents[i].xt = ents[i].yt = 0;
 		while (map_data[0][ents[i].xt][ents[i].yt] != 0) {
-			ents[i].xt = rand() % 32;
-			ents[i].yt = rand() % 20;
+			ents[i].xt = rand() % map_width;
+			ents[i].yt = rand() % map_height;
 			printf("%d , %d \n", ents[i].xt, ents[i].yt);
 		}
 		ents[i].state = ent_state_wandering;
@@ -112,8 +112,8 @@ void ents_render(ent ents[], SDL_Renderer * renderer) {
 		ent e = ents[ents_sorted[i]];
 		SDL_Rect spr_rect = ent_sprites[e.ent_type];
 		SDL_Rect rect = { 
-			(int) (e.xt * 10 + 5 - spr_rect.w / 2),
-			(int) (e.yt * 10 + 8 - spr_rect.h),
+			(int) (e.xt * 10 + 5 - spr_rect.w / 2) - camera_rect.x,
+			(int) (e.yt * 10 + 8 - spr_rect.h) - camera_rect.y,
 			spr_rect.w, spr_rect.h
 		};
 		SDL_RenderCopy(renderer, spriteshit, &spr_rect, &rect);

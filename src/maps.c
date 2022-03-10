@@ -11,28 +11,11 @@ SDL_Texture * map_texture[9]; // XXX rename map_playfield_texture?
 SDL_Rect map_texture_rect = { 0, 0, map_width * 10, map_height * 10 };
 SDL_Texture * map_view_texture;
 
-void map_init() {
-	// wall tiles
-	for (int x = 0; x < 32; x++) {
-		map_data[0][x][0] = 1;
-		map_data[0][x][19] = 1;
-	}
-	for (int y = 0; y < 20; y++) {
-		map_data[0][0][y] = 1;
-		map_data[0][31][y] = 1;
-	}
-	// add some noise
-	for (int i = 0; i < 64; i++) {
-		int x = rand() % 32;
-		int y = rand() % 20;
-		map_data[0][x][y] = 1;
-	}
-}
 
 
 void map_plot_wall_tile(int x, int y, SDL_Rect rect) {
 	SDL_Rect pixel = { 0, 0, 2, 2 };
-	int colors[4] = { 0, 5, 6, 7 };
+	int colors[4] = { 4, 5, 6, 7 };
 	for (int x2 = 0; x2 < 10; x2++) {
 		for (int y2 = 0; y2 < 10; y2++) {
 			if (x == 10 && y == 40) {

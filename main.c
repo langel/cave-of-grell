@@ -25,6 +25,8 @@ SDL_Event event;
 int running = 1;
 int game_state_id = 0;
 
+SDL_Rect camera_rect = { 0, 0, 320, 200 };
+
 #include "src/core.c"
 
 
@@ -35,14 +37,12 @@ int main(int argc, char* args[]) {
 	SDL_Window * window = SDL_CreateWindow("Cave of Grell", 100, 200,
 		window_w, window_h, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window,
-		-1, SDL_RENDERER_PRESENTVSYNC);
+		-1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
 	// setup grafx
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 	grafx_init(renderer);
 	SDL_Rect video_rect = { 0, 0, video_w, video_h };
-	map_init();
-	map_playfield_render(playfield_rect, renderer);
 	
 	SDL_Texture * vid_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, video_w, video_h);
 
@@ -51,7 +51,7 @@ int main(int argc, char* args[]) {
 	fonts[1] = font_load("font01_25x24", 24, renderer);
 
 	// setup ents
-	ents_init(ents, renderer, playfield_rect);
+	ents_init();
 
 	// initiallize all states
 	state_controller_init();
