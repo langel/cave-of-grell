@@ -22,6 +22,9 @@ font_struct fonts[4];
 
 SDL_Renderer * renderer;
 SDL_Event event;
+SDL_DisplayMode display_mode;
+int fps;
+
 int running = 1;
 int game_state_id = 0;
 
@@ -38,6 +41,9 @@ int main(int argc, char* args[]) {
 		window_w, window_h, SDL_WINDOW_RESIZABLE);
 	renderer = SDL_CreateRenderer(window,
 		-1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
+	SDL_GetDisplayMode(0, 0, &display_mode);
+	printf("Display Mode : \tbbp %i\t%s\t%i x %i\tfps %i\n", SDL_BITSPERPIXEL(display_mode.format), SDL_GetPixelFormatName(display_mode.format), display_mode.w, display_mode.h, display_mode.refresh_rate);
+	fps = display_mode.refresh_rate;
 
 	// setup grafx
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
@@ -78,8 +84,8 @@ int main(int argc, char* args[]) {
 		// fps throttle
 		uint64_t end = SDL_GetPerformanceCounter();
 		float elapsed = (float) (end - start) / (float) SDL_GetPerformanceFrequency() * 1000.f;
-		// XXX crashes on windows
-		//SDL_Delay(floor(1000.f / 60.f - elapsed));
+		// only delay if framerate is above 60
+		if (fps > 60) SDL_Delay(floor(1000.f / 60.f - elapsed));
 
 	}
 

@@ -15,7 +15,6 @@ uint32_t surface_palette[8];
 
 SDL_Texture * spriteshit;
 
-SDL_Texture * debug;
 
 void grafx_init(SDL_Renderer * renderer) {
 	// convert palette for bitmap usage
@@ -28,12 +27,11 @@ void grafx_init(SDL_Renderer * renderer) {
 		surface_palette[i] = color;
 	}
 	// load the spriteshit
-	SDL_Surface * image = SDL_LoadBMP("assets/spriteshit.bmp");
-	SDL_SetColorKey(image, SDL_TRUE, SDL_MapRGB(image->format, 170, 170, 170)); 
+	SDL_Surface * image = SDL_LoadBMP("assets/spriteshit2.bmp");
+	printf("spriteshit pixel depth : %d\n", image->format->BitsPerPixel);
+	SDL_SetColorKey(image, SDL_TRUE, SDL_MapRGB(image->format, 0, 0, 0)); 
 	spriteshit = SDL_CreateTextureFromSurface(renderer, image);
 	SDL_FreeSurface(image);
-	// debug layer
-//	debug = texture_create_generic(renderer, window_w, window_h);
 }
 
 
