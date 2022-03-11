@@ -11,7 +11,6 @@ void state_game_map_new() {
 void state_game_map_init() {
 	map_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, map_texture_rect.w, map_texture_rect.h);
 	SDL_SetTextureBlendMode(map_texture, SDL_BLENDMODE_BLEND);
-	map_drawing_new = 1;	
 	map_view_texture = texture_create_generic(renderer, map_width * 2, map_height * 2);
 	state_game_map_new();
 }

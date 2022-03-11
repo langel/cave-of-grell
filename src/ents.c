@@ -1,20 +1,4 @@
 
-typedef struct {
-	int ent_type;
-	int dir; // right, up, left, down
-	int xt; // tile positions
-	int yt;
-	int state;
-	int collisions;
-} ent;
-
-#define ENTS_COUNT 64
-ent ents[ENTS_COUNT];
-
-#define ent_state_dormant 0
-#define ent_state_wandering 1
-#define ent_state_blocked 2
-
 void ents_bubble_sort(ent ents[], int ents_sort[]) {
 	// draw lower y axis ents first
 	int size = ENTS_COUNT;
@@ -29,34 +13,45 @@ void ents_bubble_sort(ent ents[], int ents_sort[]) {
 	}
 }
 
-float ents_rnd_direction() {
-	return (float) ((rand() % 200) - 100) * 0.005f;
+int ents_rand() {
+	return (rand() % 11) + 1;
 }
 
-void ents_init() {
-	for (int i = 0; i < ENTS_COUNT; i++) {
-//		printf("init ent %d \n", i);
-		ents[i].ent_type = (i < ENTS_COUNT / 2) ? ent_giantgnome : ent_owlbear;
-		ents[i].dir = rand() % 4;
-		ents[i].xt = ents[i].yt = 0;
-		while (map_data[0][ents[i].xt][ents[i].yt] != 0) {
-			ents[i].xt = rand() % map_width;
-			ents[i].yt = rand() % map_height;
-//			printf("%d , %d \n", ents[i].xt, ents[i].yt);
-		}
-		ents[i].state = ent_state_wandering;
-		ents[i].collisions = 0;
-		char coll[10];
-//		sprintf(coll, "%d", ents[i].collisions);
-	}
-}
-
-int ents_space_free(ent ents[], int x, int y) {
+int ents_space_free(int x, int y) {
 	for (int i = 0; i < ENTS_COUNT; i++) {
 		if (ents[i].xt == x && ents[i].yt == y) return 0;
 	}
 	return 1;
 }
+
+// finds and sets empty map tile for spawning
+ent ent_find_spawn_position(ent e) {
+	e.xt = e.yt = 0;
+	while (map_data[0][e.xt][e.yt] != 0 || !ents_space_free(e.xt, e.yt)) {
+		e.xt = rand() % map_width;
+		e.yt = rand() % map_height;
+	}
+	return e;
+}
+
+
+void ents_init() {
+	for (int i = 0; i < ENTS_COUNT; i++) {
+		printf("\nent_id %d\n", i);
+		ent e = ents[i];
+		e.type = ents_rand();
+		// XXX ent 0 should be empty ent slot
+		if (i == 0) e.type = 0; // set player sprite
+		e = ent_find_spawn_position(e);
+		printf("spawning %s @ %d, %d\n", ent_types[e.type].name, e.xt, e.yt);
+		e.hp = ent_types[e.type].hp;
+		e.state = ent_types[e.type].state;
+		e.collisions = 0;
+		e.dir = rand() % 4;
+		ents[i] = e;
+	}
+}
+
 
 void ents_update(ent ents[], SDL_Rect rect) {
 
@@ -68,36 +63,36 @@ void ents_update(ent ents[], SDL_Rect rect) {
 			e.dir = rand() % 4;
 		}
 		else if (e.state == ent_state_wandering && frame_counter % 10 == 0) {
-			if (e.dir == 0) { // right
+			if (rand() % 11 == 0) e.state = ent_state_blocked;
+			else if (e.dir == 0) { // right
 				if (map_data[0][e.xt + 1][e.yt] == 0) {
-					if (ents_space_free(ents, e.xt+1, e.yt)) e.xt++;
+					if (ents_space_free(e.xt+1, e.yt)) e.xt++;
 					else e.collisions++;
 				}
 				else e.state = ent_state_blocked;
 			}
-			if (e.dir == 1) { // up
+			else if (e.dir == 1) { // up
 				if (map_data[0][e.xt][e.yt - 1] == 0) {
-					if (ents_space_free(ents, e.xt, e.yt - 1)) e.yt--;
+					if (ents_space_free(e.xt, e.yt - 1)) e.yt--;
 					else e.collisions++;
 				}
 				else e.state = ent_state_blocked;
 			}
-			if (e.dir == 2) { //left
+			else if (e.dir == 2) { //left
 				if (map_data[0][e.xt-1][e.yt] == 0) {
-					if (ents_space_free(ents, e.xt - 1, e.yt)) e.xt--;
+					if (ents_space_free(e.xt - 1, e.yt)) e.xt--;
 					else e.collisions++;
 				}
 				else e.state = ent_state_blocked;
 			}
-			if (e.dir == 3) { // down
+			else if (e.dir == 3) { // down
 				if (map_data[0][e.xt][e.yt + 1] == 0) {
-					if (ents_space_free(ents, e.xt, e.yt + 1)) e.yt++;
+					if (ents_space_free(e.xt, e.yt + 1)) e.yt++;
 					else e.collisions++;
 				}
 				else e.state = ent_state_blocked;
 			}
 		}
-		if (rand() % 27 == 0) e.state = ent_state_blocked;
 
 		ents[i] = e;
 	}
@@ -110,7 +105,7 @@ void ents_render(ent ents[], SDL_Renderer * renderer) {
 	ents_bubble_sort(ents, ents_sorted);
 	for (int i = 0; i < ENTS_COUNT; i++) {
 		ent e = ents[ents_sorted[i]];
-		SDL_Rect spr_rect = ent_sprites[e.ent_type];
+		SDL_Rect spr_rect = ent_types[e.type].sprite;
 		SDL_Rect rect = { 
 			(int) (e.xt * 10 + 5 - spr_rect.w / 2) - camera_rect.x,
 			(int) (e.yt * 10 + 8 - spr_rect.h) - camera_rect.y,
