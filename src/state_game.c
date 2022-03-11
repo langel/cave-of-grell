@@ -1,4 +1,6 @@
 
+int game_state_id = 0;
+
 void state_game_init() {
 }
 
@@ -16,6 +18,10 @@ void state_game_frame() {
 
 	state_game_hud_render(renderer);
 	
+	if (keys[SDL_SCANCODE_TAB] == 1) {
+		game_state_id++;
+		printf("game_state_id : %d\n", game_state_id);
+	}
 }
 
 

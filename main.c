@@ -6,6 +6,7 @@
 #include "lib/debug.c"
 #include "lib/font.c"
 #include "lib/generic.c"
+#include "lib/keyboard.c"
 
 int video_w = 420;
 int video_h = 200;
@@ -22,11 +23,12 @@ font_struct fonts[4];
 
 SDL_Renderer * renderer;
 SDL_Event event;
+SDL_Rect video_rect;
 SDL_DisplayMode display_mode;
 int fps;
 
 int running = 1;
-int game_state_id = 0;
+int state_id = 2;
 
 SDL_Rect camera_rect = { 0, 0, 320, 200 };
 
@@ -48,13 +50,15 @@ int main(int argc, char* args[]) {
 	// setup grafx
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 	grafx_init(renderer);
-	SDL_Rect video_rect = { 0, 0, video_w, video_h };
+	video_rect = (SDL_Rect) { 0, 0, video_w, video_h };
 	
 	SDL_Texture * vid_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, video_w, video_h);
 
 	// fonts
 	fonts[0] = font_load("font00_14x14", 14, renderer);
 	fonts[1] = font_load("font01_25x24", 24, renderer);
+
+	keyboard_init();
 
 	// initiallize all states
 	state_controller_init();

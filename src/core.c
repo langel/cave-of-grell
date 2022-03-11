@@ -10,5 +10,6 @@
 #include "./state_game_map.c"
 #include "./state_game_playfield.c"
 #include "./state_game.c"
+#include "./state_help.c"
 #include "./state_menu.c"
 #include "./state_controller.c"
