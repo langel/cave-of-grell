@@ -17,10 +17,6 @@ void state_game_map_init() {
 SDL_Rect map_view_rect = { 32, 20, 256, 160 };
 
 void state_game_map_frame() {
-	if (map_drawing_new == 1) { 
-		state_game_map_new();
-		map_drawing_new = 0;
-	}
 
 	// copy map view to screen
 	SDL_RenderCopy(renderer, map_view_texture, NULL, &map_view_rect);

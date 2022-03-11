@@ -19,8 +19,9 @@ ent ents[ENTS_COUNT];
 #define ent_state_dormant 3
 #define ent_state_pursuit 4
 #define ent_state_flee 5
+#define ent_state_player_controlled 6
 
-#define ent_player 0
+#define ent_nan 0
 #define ent_gnome 1
 #define ent_owlbear 2
 #define ent_rat 3
@@ -34,6 +35,7 @@ ent ents[ENTS_COUNT];
 #define ent_grell 11
 #define ent_ladder_up 12
 #define ent_ladder_down 13
+#define ent_player 14
 
 
 typedef struct {
@@ -51,10 +53,8 @@ typedef struct {
 
 
 ent_type ent_types[42] = {
-	{ "player", ent_state_wandering,
-		42, 10, 10, 2, 9, "fists", 
-		{ 0, 0, 20, 40 }, 0
-	},
+	{ "nan", ent_state_dead, 0, 0, 0, 0, 0, "does not exist", 
+		{ 0, 0, 0, 0 }, 0 },
 	{ "gnome", 
 		1, 25, 8, 10, 
 		3, 5, "cunnings", { 20, 0, 13, 40 }, 56
@@ -98,6 +98,10 @@ ent_type ent_types[42] = {
 	{ "ladder_down", ent_state_dormant, 
 		0, 0, 0, 0, 0, "descends",
 		{ 100, 40, 20, 20 }, 13 },
+	{ "player", ent_state_wandering,
+		42, 10, 10, 2, 9, "fists", 
+		{ 0, 0, 20, 40 }, 0
+	},
 };
 
 
