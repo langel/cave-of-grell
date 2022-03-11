@@ -16,9 +16,6 @@ void state_game_frame() {
 
 	state_game_hud_render(renderer);
 	
-	// debug
-	SDL_RenderCopy(renderer, debug, NULL, NULL);
-
 }
 
 
