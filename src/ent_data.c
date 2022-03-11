@@ -1,4 +1,18 @@
 
+typedef struct {
+	int type;
+	int dir; // right, up, left, down
+	int xt; // tile positions
+	int yt;
+	int state;
+	int hp;
+	int collisions;
+} ent;
+
+#define ENTS_COUNT 64
+ent ents[ENTS_COUNT];
+
+
 #define ent_state_dead 0
 #define ent_state_wandering 1
 #define ent_state_blocked 2
@@ -37,9 +51,9 @@ typedef struct {
 
 
 ent_type ent_types[42] = {
-	{ "player", 
-		1, 42, 10, 10, 
-		2, 9, "fists", { 0, 0, 20, 40 }, 0,
+	{ "player", ent_state_wandering,
+		42, 10, 10, 2, 9, "fists", 
+		{ 0, 0, 20, 40 }, 0
 	},
 	{ "gnome", 
 		1, 25, 8, 10, 
@@ -89,15 +103,3 @@ ent_type ent_types[42] = {
 
 
 
-typedef struct {
-	int type;
-	int dir; // right, up, left, down
-	int xt; // tile positions
-	int yt;
-	int state;
-	int hp;
-	int collisions;
-} ent;
-
-#define ENTS_COUNT 64
-ent ents[ENTS_COUNT];

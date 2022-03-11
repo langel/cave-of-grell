@@ -1,20 +1,4 @@
 
-
-// map matrix
-// map_data[level][row/x][col/y]
-
-#define map_levels 9
-#define map_width 128
-#define map_height 80
-
-int map_data[map_levels][map_width][map_height];
-
-int map_drawing_new = 0;
-int map_drawing_stage = 0;
-
-
-int cavity_centers[9][2]; // cavity id / x,y
-
 void map_gen_new(int map_level) {
 	
 	// fill map with rocks
@@ -47,6 +31,26 @@ void map_gen_new(int map_level) {
 	for (int i = 0; i < 512; i++) {
 		map_data[map_level][rand() % map_width][rand() % map_height] = 1;
 	}
+	
+	// ENTITY PLOTTING!!!
+	ents_init(map_level);
+	// up ladder
+	ents[2].type = ent_ladder_up;
+	ents[2].xt = cavity_centers[0][0];
+	ents[2].yt = cavity_centers[0][1];
+	// down ladder
+	ents[1].type = ent_ladder_down;
+	ents[1].xt = cavity_centers[8][0];
+	ents[1].yt = cavity_centers[8][1];
+	// player
+	ents[0].type = ent_player;
+	ents[0].xt = cavity_centers[0][0] + 1;
+	ents[0].yt = cavity_centers[0][1];
+	ents[0].state = ent_state_wandering;
+	ents[0].dir = rand() % 4;
+
+	// XXX add more empty tiles around room here
+	// this will keep chests from blocking corridoros
 
 	for (int i = 1; i < 9; i++) {
 

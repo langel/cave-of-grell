@@ -2,9 +2,8 @@
 
 void state_game_map_new() {
 	map_gen_new(0);
-	ents_init();
 	map_view_texture_update(0);
-	map_playfield_render();
+	map_playfield_render(0);
 }
 
 

@@ -25,9 +25,9 @@ int ents_space_free(int x, int y) {
 }
 
 // finds and sets empty map tile for spawning
-ent ent_find_spawn_position(ent e) {
+ent ent_find_spawn_position(ent e, int map_level) {
 	e.xt = e.yt = 0;
-	while (map_data[0][e.xt][e.yt] != 0 || !ents_space_free(e.xt, e.yt)) {
+	while (map_data[map_level][e.xt][e.yt] != 0 || !ents_space_free(e.xt, e.yt)) {
 		e.xt = rand() % map_width;
 		e.yt = rand() % map_height;
 	}
@@ -35,15 +35,13 @@ ent ent_find_spawn_position(ent e) {
 }
 
 
-void ents_init() {
-	for (int i = 0; i < ENTS_COUNT; i++) {
-		printf("\nent_id %d\n", i);
+void ents_init(int map_level) {
+	for (int i = 3; i < ENTS_COUNT; i++) {
+//		printf("\nent_id %d\n", i);
 		ent e = ents[i];
 		e.type = ents_rand();
-		// XXX ent 0 should be empty ent slot
-		if (i == 0) e.type = 0; // set player sprite
-		e = ent_find_spawn_position(e);
-		printf("spawning %s @ %d, %d\n", ent_types[e.type].name, e.xt, e.yt);
+		e = ent_find_spawn_position(e, map_level);
+//		printf("spawning %s @ %d, %d\n", ent_types[e.type].name, e.xt, e.yt);
 		e.hp = ent_types[e.type].hp;
 		e.state = ent_types[e.type].state;
 		e.collisions = 0;
