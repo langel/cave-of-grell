@@ -40,7 +40,7 @@ void state_game_hud_render(SDL_Renderer * renderer) {
 	font_set_color(fonts[0], sdl_palette[0]);
 	char words[32];
 	// Health
-	if (ents[0].hp >= 0) sprintf(words, "Health %d / %d", ents[0].hp, player_hp);
+	if (ents[0].hp >= 0) sprintf(words, "Health  %d/%d", ents[0].hp, player_hp);
 	else sprintf(words, "Player Died.");
 	font_render_text(words, fonts[0], renderer, text);
 	// GP

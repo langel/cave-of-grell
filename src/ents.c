@@ -122,6 +122,11 @@ void ents_update(ent ents[], SDL_Rect rect) {
 							ent_load_type(target_id, ent_nan);
 							sfx_gold();
 						}
+						if (ent_target.type == ent_key) {
+							player_gp += rand() % 17 + 7;
+							ent_load_type(target_id, ent_nan);
+							sfx_gold();
+						}
 						if (ent_target.type == ent_herb) {
 							e.hp += 20 + rand() % 15;
 							if (e.hp > player_hp) e.hp = player_hp;
@@ -141,8 +146,8 @@ void ents_update(ent ents[], SDL_Rect rect) {
 							// player bonuses
 							if (i == 0) {
 								player_xp += ent_target_type.xp;
-								player_hp++;
-								ents[0].hp++;
+								player_hp += player_level + 1;
+								ents[0].hp += (int) ceilf((float) (player_level + 1) * 0.6f);
 							}
 							if (i == 0 || target_id == 0) sfx_death();
 						}
@@ -153,6 +158,7 @@ void ents_update(ent ents[], SDL_Rect rect) {
 				else {
 					e.xt = target_x;
 					e.yt = target_y;
+					if (i == 0 && e.dir < 4) sfx_footstep();
 				}
 			}
 

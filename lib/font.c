@@ -38,7 +38,6 @@ font_struct font_load(char *name, int size, SDL_Renderer * renderer) {
 	f.shit_rect.h = image->h;
 	SDL_SetColorKey(image, SDL_TRUE, SDL_MapRGB(image->format, 0, 0, 0)); 
 	f.texture = SDL_CreateTextureFromSurface(renderer, image);
-	printf("%s\n", SDL_GetError());
 	SDL_FreeSurface(image);
 	// load data
 	char data_filename[32];
@@ -52,7 +51,7 @@ font_struct font_load(char *name, int size, SDL_Renderer * renderer) {
 	/* Read in 8-bit numbers into the buffer */
 	size_t bytes_read = 0;
 	bytes_read = fread(buffer, sizeof(unsigned char), FONT_MAX_LEN, data_file);
-	printf("bytes read : %zu\n", bytes_read);
+	//printf("bytes read : %zu\n", bytes_read);
 	// Note: sizeof(unsigned char) is for emphasis
 	int x = 0;
 	int y = 0;
@@ -67,8 +66,8 @@ font_struct font_load(char *name, int size, SDL_Renderer * renderer) {
 			x = 0;
 			y += f.height;
 		}
-		if (i % 8 == 0) printf("\n");
-		printf("%d\t", width);
+		//if (i % 8 == 0) printf("\n");
+		//printf("%d\t", width);
 		f.char_rect[i].x = x;
 		f.char_rect[i].y = y;
 		f.char_rect[i].w = width;
@@ -76,7 +75,7 @@ font_struct font_load(char *name, int size, SDL_Renderer * renderer) {
 		x += f.width;
 	}
 	fclose(data_file);
-	printf("\n\nx, y, 1st_char : %d, %d, %d\n", f.width, f.height, first_char);
+	//printf("\n\nx, y, 1st_char : %d, %d, %d\n", f.width, f.height, first_char);
 	return f;
 }
 

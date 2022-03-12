@@ -1,4 +1,15 @@
 
+// XXX some levels should have variations
+// 1 : 3 rooms
+// 2 : normal
+// 3 : normal
+// 4 : some water
+// 5 : tiny rooms
+// 6 : giant lake
+// 7 : normal many grell
+// 8 : giant rooms full of grell
+// 9 : 3 rooms with invisibility ring
+
 void map_gen_new(int map_level) {
 	
 	// fill map with rocks
@@ -9,6 +20,15 @@ void map_gen_new(int map_level) {
 		}
 	}
 
+	// make a lake
+//	if (map_level == 6) {
+	for (int x = 50; x < map_width - 50; x++) {
+		for (int y = 30; y < map_height - 30; y++) {
+			map_data[map_level][x][y] = 2;
+		}
+	}
+
+	// make 9 rooms
 	for (int i = 0; i < 9; i++) {
 		SDL_Rect cavity;
 		cavity.w = (rand() % (map_width / 5)) + 4;
@@ -28,8 +48,13 @@ void map_gen_new(int map_level) {
 		//printf("\nlevel %d cavity %d center x, y : %d, %d\n", map_level, map_drawing_stage, cavity_centers[i][0], cavity_centers[i][1]);
 	}
 
+	// add debris
 	for (int i = 0; i < 512; i++) {
-		map_data[map_level][rand() % map_width][rand() % map_height] = 1;
+		int x = rand() % map_width;
+		int y = rand() % map_height;
+		if (map_data[map_level][x][y] == 0) {
+			map_data[map_level][x][y] = 1;
+		}
 	}
 	
 	// ENTITY PLOTTING!!!

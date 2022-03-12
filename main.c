@@ -64,6 +64,7 @@ int main(int argc, char* args[]) {
 	keyboard_init();
 
 	// initiallize all states
+	srand(time(0));
 	state_controller_init();
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");

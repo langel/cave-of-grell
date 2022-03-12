@@ -16,8 +16,17 @@ void sfx_death() {
 	//printf("%lf %lf %lf \n", audio_hertz, audio_bend, audio_amp);
 }
 
+void sfx_footstep() {
+	if (audio_amp < 0.1) {
+		audio_amp = 0.25;
+		audio_fade = 0.995;
+		audio_bend = 1;
+		audio_hertz = (double) (80 + rand() % 20) / 32000.0;
+	}
+}
+
 void sfx_gold() {
-	audio_hertz = 2000.0 / 32000.0;
+	audio_hertz = (float) (2000 + rand() % 22) / 32000.0;
 	audio_amp = 0.2;
 	audio_bend = 1.0;
 	audio_fade = 0.99989;
