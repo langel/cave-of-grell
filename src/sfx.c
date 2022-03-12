@@ -10,7 +10,7 @@ void sfx_attack() {
 
 void sfx_death() {
 	audio_amp = 0.3;
-	audio_fade = 0.999996;
+	audio_fade = 0.99996;
 	audio_hertz = 420.0 / 32000.0;
 	audio_bend = 0.99991;
 	//printf("%lf %lf %lf \n", audio_hertz, audio_bend, audio_amp);

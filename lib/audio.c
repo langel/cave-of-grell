@@ -112,6 +112,8 @@ void audio_callback(void* userdata, uint8_t* byte_stream, int byte_stream_length
 	for (int i = 0; i < float_stream_length; i += 2) {
 		audio_amp *= audio_fade;
 		audio_hertz *= audio_bend;
+		if (audio_hertz > 16000.0 / 32000.0 && audio_bend > 1.0) audio_bend = 1.0;
+		if (audio_hertz < 0.16 / 32000.0 && audio_bend < 1.0) audio_bend = 1.0;
 		float output_l = 0.f;
 		float output_r = 0.f;
 		audio_phase += audio_hertz;
