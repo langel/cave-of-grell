@@ -36,6 +36,7 @@ ent ents[ENTS_COUNT];
 #define ent_ladder_up 12
 #define ent_ladder_down 13
 #define ent_player 14
+#define ent_herb 15
 
 
 typedef struct {
@@ -100,6 +101,9 @@ ent_type ent_types[42] = {
 	{ "player", ent_state_wandering,
 		42, 10, 10, 2, 9, "fists", 
 		{ 0, 0, 20, 40 }, 0
+	},
+	{ "herb", ent_state_dormant, 0, 0, 0, 0, 0, "heals", 
+		{ 0, 60, 20, 9 }, 0
 	},
 };
 

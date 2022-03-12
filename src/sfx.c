@@ -22,3 +22,10 @@ void sfx_gold() {
 	audio_bend = 1.0;
 	audio_fade = 0.99989;
 }
+
+void sfx_heal() {
+	audio_hertz = 42.0 / 32000.0;
+	audio_amp = 0.25;
+	audio_bend = 1.003;
+	audio_fade = 0.99977;
+}

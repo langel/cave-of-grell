@@ -14,7 +14,7 @@ void ents_bubble_sort(ent ents[], int ents_sort[]) {
 }
 
 int ents_rand() {
-	return (rand() % 11) + 1;
+	return (rand() % 15) + 1;
 }
 
 
@@ -121,6 +121,12 @@ void ents_update(ent ents[], SDL_Rect rect) {
 							player_gp += rand() % 7 + 5;
 							ent_load_type(target_id, ent_nan);
 							sfx_gold();
+						}
+						if (ent_target.type == ent_herb) {
+							e.hp += 20 + rand() % 15;
+							if (e.hp > player_hp) e.hp = player_hp;
+							ent_load_type(target_id, ent_nan);
+							sfx_heal();
 						}
 					}
 					// don't attack dormant or same types

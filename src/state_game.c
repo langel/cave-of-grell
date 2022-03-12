@@ -23,6 +23,10 @@ void state_game_frame() {
 		state_game_map_frame();
 	}
 
+	// make this breath
+	// XXX needs a filter and tremolo
+	brown_amp = (1.f - (float) ents[0].hp / (float) player_hp) * 0.8f;
+
 	state_game_hud_render(renderer);
 	
 	if (keys[SDL_SCANCODE_TAB] == 1) {
