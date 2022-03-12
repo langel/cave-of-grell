@@ -46,7 +46,8 @@ void map_gen_new(int map_level) {
 	ents[0].type = ent_player;
 	ents[0].xt = cavity_centers[0][0] + 1;
 	ents[0].yt = cavity_centers[0][1];
-	ents[0].state = ent_state_wandering;
+	ents[0].state = ent_state_player_controlled;
+	ents[0].hp = 100;
 	ents[0].dir = rand() % 4;
 
 	// XXX add more empty tiles around room here

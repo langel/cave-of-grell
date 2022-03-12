@@ -70,11 +70,20 @@ void state_game_playfield_frame() {
 	// sprites
 	ents_render(ents, renderer);
 	
-	ents[0].dir = 0xff;
-	if (keys[SDL_SCANCODE_RIGHT]) ents[0].dir = 0;
-	if (keys[SDL_SCANCODE_UP]) ents[0].dir = 1;
-	if (keys[SDL_SCANCODE_LEFT]) ents[0].dir = 2;
-	if (keys[SDL_SCANCODE_DOWN]) ents[0].dir = 3;
+	if (ents[0].state == ent_state_player_controlled) {
+		ents[0].dir = 0xff;
+		if (keys[SDL_SCANCODE_RIGHT]) ents[0].dir = 0;
+		if (keys[SDL_SCANCODE_UP]) ents[0].dir = 1;
+		if (keys[SDL_SCANCODE_LEFT]) ents[0].dir = 2;
+		if (keys[SDL_SCANCODE_DOWN]) ents[0].dir = 3;
+	}
+	if (keys[SDL_SCANCODE_C] == 1) {
+		printf("c pressed\n");
+		if (ents[0].state == ent_state_player_controlled) {
+			ents[0].state = ent_state_blocked;
+		}
+		else ents[0].state = ent_state_player_controlled;
+	}
 
 }
 

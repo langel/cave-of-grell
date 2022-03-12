@@ -17,21 +17,28 @@ int ents_rand() {
 	return (rand() % 11) + 1;
 }
 
-int ents_space_free(int x, int y) {
+
+int ents_at_position(int map_id, int x, int y) {
 	for (int i = 0; i < ENTS_COUNT; i++) {
-		if (ents[i].xt == x && ents[i].yt == y) return 0;
+		if (ents[i].xt == x && ents[i].yt == y) return i;
 	}
-	return 1;
+	return 0xff;
 }
 
 // finds and sets empty map tile for spawning
 ent ent_find_spawn_position(ent e, int map_level) {
 	e.xt = e.yt = 0;
-	while (map_data[map_level][e.xt][e.yt] != 0 || !ents_space_free(e.xt, e.yt)) {
+	while (map_data[map_level][e.xt][e.yt] != 0 || ents_at_position(0, e.xt, e.yt) != 0xff) {
 		e.xt = rand() % map_width;
 		e.yt = rand() % map_height;
 	}
 	return e;
+}
+
+void ent_load_type(int ent_id, int ent_type) {
+	ents[ent_id].type = ent_type;
+	ents[ent_id].state = ent_types[ent_type].state;
+	ents[ent_id].hp = ent_types[ent_type].hp;
 }
 
 
@@ -53,46 +60,98 @@ void ents_init(int map_level) {
 
 void ents_update(ent ents[], SDL_Rect rect) {
 
-	for (int i = 0; i < ENTS_COUNT; i++) {
-		ent e = ents[i];
+	// XXX need to make this turn based but throttled?!?!
 
-		if (e.state == ent_state_blocked) {
-			e.state = ent_state_wandering;
-			e.dir = rand() % 4;
-		}
-		else if (e.state == ent_state_wandering && frame_counter % 10 == 0) {
-			if (rand() % 11 == 0) e.state = ent_state_blocked;
-			else if (e.dir == 0) { // right
-				if (map_data[0][e.xt + 1][e.yt] == 0) {
-					if (ents_space_free(e.xt+1, e.yt)) e.xt++;
-					else e.collisions++;
-				}
-				else e.state = ent_state_blocked;
-			}
-			else if (e.dir == 1) { // up
-				if (map_data[0][e.xt][e.yt - 1] == 0) {
-					if (ents_space_free(e.xt, e.yt - 1)) e.yt--;
-					else e.collisions++;
-				}
-				else e.state = ent_state_blocked;
-			}
-			else if (e.dir == 2) { //left
-				if (map_data[0][e.xt-1][e.yt] == 0) {
-					if (ents_space_free(e.xt - 1, e.yt)) e.xt--;
-					else e.collisions++;
-				}
-				else e.state = ent_state_blocked;
-			}
-			else if (e.dir == 3) { // down
-				if (map_data[0][e.xt][e.yt + 1] == 0) {
-					if (ents_space_free(e.xt, e.yt + 1)) e.yt++;
-					else e.collisions++;
-				}
-				else e.state = ent_state_blocked;
-			}
-		}
+	if (frame_counter % 6 == 0) {
 
-		ents[i] = e;
+		for (int i = 0; i < ENTS_COUNT; i++) {
+			ent e = ents[i];
+
+			int target_x = e.xt;
+			int target_y = e.yt;
+
+			if (e.state == ent_state_blocked) {
+				e.state = ent_state_wandering;
+				e.dir = rand() % 4;
+			}
+			else if (e.state == ent_state_wandering || e.state == ent_state_player_controlled) {
+				int blocked = 0;
+				if (e.state == ent_state_wandering && rand() % 11 == 0) e.state = ent_state_blocked;
+				else if (e.dir == 0) { // right
+					if (map_data[0][e.xt + 1][e.yt] == 0) target_x++;
+					else blocked++;
+				}
+				else if (e.dir == 1) { // up
+					if (map_data[0][e.xt][e.yt - 1] == 0) target_y--;
+					else blocked++;
+				}
+				else if (e.dir == 2) { //left
+					if (map_data[0][e.xt-1][e.yt] == 0) target_x--;
+					else blocked++;
+				}
+				else if (e.dir == 3) { // down
+					if (map_data[0][e.xt][e.yt + 1] == 0) target_y++;
+					else blocked++;
+				}
+				if (blocked && i != 0) e.state = ent_state_blocked;
+				int target_id = ents_at_position(0, target_x, target_y);
+				// direction hit a target
+				if (target_id != i && target_id != 0xff && ents[target_id].state != ent_state_dead) {
+					ent ent_target = ents[target_id];
+					ent_type ent_target_type = ent_types[ent_target.type];
+					// IS PLAYER
+					if (i == 0) {
+						if (ent_target.type == ent_chest) {
+							// is it gold or is it a mimic?
+							if (rand() % 10 < player_level) {
+								ent_load_type(target_id, ent_mimic);
+							}
+							else {
+								player_gp += rand() % 100;
+								ent_load_type(target_id, ent_chest_emptied);
+								sfx_gold();
+							}
+						}
+						if (ent_target.type == ent_coin) {
+							player_gp++;
+							ent_load_type(target_id, ent_nan);
+							sfx_gold();
+						}
+						if (ent_target.type == ent_coins) {
+							player_gp += rand() % 7 + 5;
+							ent_load_type(target_id, ent_nan);
+							sfx_gold();
+						}
+					}
+					// don't attack dormant or same types
+					if (ent_target.state != ent_state_dormant && e.type != ent_target.type) {
+						int damage = ent_target_type.damage_base + rand() %  ent_target_type.damage_rand;
+					//	printf("%s %s %s for %d damage\n", ent_types[e.type].name, ent_types[e.type].verb, ent_types[ents[target_ent_id].type].name, damage);
+						ents[target_id].hp -= damage;
+						if (ents[target_id].hp < 0) {
+							printf("%s dies\n", ent_target_type.name);
+							ents[target_id].state = ent_state_dead;
+							ents[target_id].type = 0;
+							// player bonuses
+							if (i == 0) {
+								player_xp += ent_target_type.xp;
+								player_hp++;
+								ents[0].hp++;
+							}
+							if (i == 0 || target_id == 0) sfx_death();
+						}
+						// not a death
+						else if (i == 0 || target_id == 0) sfx_attack();
+					}
+				}
+				else {
+					e.xt = target_x;
+					e.yt = target_y;
+				}
+			}
+
+			ents[i] = e;
+		}
 	}
 }
 
@@ -103,13 +162,16 @@ void ents_render(ent ents[], SDL_Renderer * renderer) {
 	ents_bubble_sort(ents, ents_sorted);
 	for (int i = 0; i < ENTS_COUNT; i++) {
 		ent e = ents[ents_sorted[i]];
-		SDL_Rect spr_rect = ent_types[e.type].sprite;
-		SDL_Rect rect = { 
-			(int) (e.xt * 10 + 5 - spr_rect.w / 2) - camera_rect.x,
-			(int) (e.yt * 10 + 8 - spr_rect.h) - camera_rect.y,
-			spr_rect.w, spr_rect.h
-		};
-		SDL_RenderCopy(renderer, spriteshit, &spr_rect, &rect);
+		// XXX some kind of death check
+		if (e.type != 0) {
+			SDL_Rect spr_rect = ent_types[e.type].sprite;
+			SDL_Rect rect = { 
+				(int) (e.xt * 10 + 5 - spr_rect.w / 2) - camera_rect.x,
+				(int) (e.yt * 10 + 8 - spr_rect.h) - camera_rect.y,
+				spr_rect.w, spr_rect.h
+			};
+			SDL_RenderCopy(renderer, spriteshit, &spr_rect, &rect);
+		}
 	}
 }
 

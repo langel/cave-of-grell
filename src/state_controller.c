@@ -4,6 +4,7 @@ void state_controller_init() {
 	state_game_hud_init();
 	state_game_map_init();
 	state_game_playfield_init();
+	state_game_new_player();
 }
 
 void state_controller_frame(SDL_Renderer * renderer) {

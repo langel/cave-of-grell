@@ -4,6 +4,13 @@ int game_state_id = 0;
 void state_game_init() {
 }
 
+void state_game_new_player() {
+	player_hp = 100;
+	player_xp = 0;
+	player_gp = 0;
+	player_level = 0; // dungeon/map level
+	ents[0].hp = player_hp;
+}
 
 void state_game_frame() {
 

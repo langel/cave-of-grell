@@ -54,7 +54,7 @@ typedef struct {
 
 ent_type ent_types[42] = {
 	{ "nan", ent_state_dead, 0, 0, 0, 0, 0, "does not exist", 
-		{ 0, 0, 0, 0 }, 0 },
+		{ 0, 0, 20, 40 }, 0 },
 	{ "gnome", 
 		1, 25, 8, 10, 
 		3, 5, "cunnings", { 20, 0, 13, 40 }, 56
@@ -83,8 +83,7 @@ ent_type ent_types[42] = {
 	{ "chest",
 		ent_state_dormant, 0, 0, 0, 0, 0, "opens",
 		{ 20, 40, 20, 20 }, 0 },
-	{ "empty chest",
-		ent_state_dormant, 0, 0, 0, 0, 0, "sits",
+	{ "empty chest", ent_state_dead, 0, 0, 0, 0, 0, "sits",
 		{ 40, 40, 20, 20 }, 0 },
 	{ "mimic", ent_state_wandering, 
 		43, 12, 12, 3, 8, "mawls",

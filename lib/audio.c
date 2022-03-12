@@ -1,4 +1,11 @@
 
+double audio_amp = 0.0;
+double audio_hertz = 0.0;
+double audio_phase = 0.0;
+double audio_fade = 0.7;
+double audio_bend = 1.0;
+
+
 void audio_spec_log(SDL_AudioSpec *as) {
 	logout(
 		" freq______%5d\n"
@@ -103,12 +110,14 @@ void audio_callback(void* userdata, uint8_t* byte_stream, int byte_stream_length
 	float * float_stream = (float*) byte_stream;
 	int float_stream_length = byte_stream_length >> 2;
 	for (int i = 0; i < float_stream_length; i += 2) {
-		audio_amp *= 0.9996f;
+		audio_amp *= audio_fade;
+		audio_hertz *= audio_bend;
 		float output_l = 0.f;
 		float output_r = 0.f;
 		audio_phase += audio_hertz;
-		if (audio_phase > 1.f) audio_phase -= 1.f;
-		output_l = osc_square_blep(audio_phase, audio_hertz) * audio_amp;
+		if (audio_phase > 1.0) audio_phase -= 1.0;
+//		output_l = osc_square_blep((float) audio_phase, (float) audio_hertz) * (float) audio_amp;
+		output_l = osc_square((float) audio_phase) * (float) audio_amp * 0.5f;
 		output_r = output_l;
 		float_stream[i] = output_l;
 		float_stream[i+1] = output_r;

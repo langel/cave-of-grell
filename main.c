@@ -14,9 +14,6 @@ int window_w = 1280;
 int window_h = 720;
 int frame_counter = 0;
 
-float audio_amp = 0.f;
-float audio_hertz = 0.f;
-float audio_phase = 0.f;
 #include "lib/audio.c"
 
 font_struct fonts[4];
@@ -31,6 +28,11 @@ int running = 1;
 int state_id = 2;
 
 SDL_Rect camera_rect = { 0, 0, 320, 200 };
+
+int player_hp; // max hp not current hp
+int player_xp;
+int player_gp;
+int player_level;
 
 #include "src/core.c"
 
@@ -57,6 +59,7 @@ int main(int argc, char* args[]) {
 	// fonts
 	fonts[0] = font_load("font00_14x14", 14, renderer);
 	fonts[1] = font_load("font01_25x24", 24, renderer);
+	fonts[2] = font_load("font02_12x15", 12, renderer);
 
 	keyboard_init();
 
