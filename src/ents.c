@@ -94,6 +94,7 @@ void ents_update(int map_level, ent ents[], SDL_Rect rect) {
 					else blocked++;
 				}
 				if (blocked && i != 0) e.state = ent_state_blocked;
+				if (!blocked && i == 0 && e.dir != 0xff) player_steps++;
 				int target_id = ents_at_position(map_level, target_x, target_y);
 				// direction hit a target
 				if (target_id != i && target_id != 0xff && ents[target_id].state != ent_state_dead) {
@@ -231,7 +232,13 @@ void ents_render(ent ents[], SDL_Renderer * renderer) {
 		// XXX some kind of death check
 		if (e.type != 0) {
 			SDL_Rect spr_rect;
-			if (player_has_crown && e.type == ent_player) spr_rect = ent_types[ent_player_with_crown].sprite;
+			if (e.type == ent_player) {
+				int step_offset = (player_steps % 4) * 20;
+				spr_rect = (!player_has_crown) ?
+					ent_types[ent_player].sprite :
+					ent_types[ent_player_with_crown].sprite;
+				spr_rect.x += step_offset;
+			}
 			else spr_rect = ent_types[e.type].sprite;
 			SDL_Rect rect = { 
 				(int) (e.xt * 10 + 5 - spr_rect.w / 2) - camera_rect.x,

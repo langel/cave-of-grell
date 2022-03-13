@@ -37,6 +37,7 @@ int player_gp;
 int player_level;
 int player_update_level = 0;
 int player_has_crown = 0;
+int player_steps = 0;
 SDL_Texture * dirt_texture;
 
 #include "src/core.c"

@@ -141,7 +141,7 @@ ent_type ent_types[42] = {
 		0, 0, 0, 0, 0, "descends",
 		{ 100, 42, 20, 18 }, 13 },
 	{ "player", ent_state_wandering,	42, 10, 10, 2, 9, "quacks", 
-		{ 100, 60, 20, 20 }, 0
+		{ 180, 100, 20, 20 }, 0
 	},
 	{ "herb", ent_state_dormant, 0, 0, 0, 0, 0, "heals", 
 		{ 0, 60, 20, 9 }, 0
