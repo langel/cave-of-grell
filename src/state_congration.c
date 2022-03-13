@@ -8,6 +8,7 @@ int sfx_congration_counter;
 void state_congration_init() {
 	state_id = 4;
 	sfx_congration_counter = 0;
+	games_won++;
 }
 
 void state_congration_frame() {

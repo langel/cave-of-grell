@@ -1,6 +1,5 @@
 
 // MAPS ARE 128 x 80 tiles
-// XXX some levels should have variations
 // 1 : 3 rooms
 // 2 : normal
 // 3 : normal
@@ -118,9 +117,7 @@ void map_gen_new(int map_level) {
 	ents[map_level][0].yt = cavity_centers[0][1];
 	ents[map_level][0].state = ent_state_player_controlled;
 
-	// XXX add more empty tiles around room here
-	// this will keep chests from blocking corridoros
-
+	// carve corridors between rooms
 	for (int i = 1; i < map_gen_room_count[map_level]; i++) {
 
 		// corridor cut outs between cavities

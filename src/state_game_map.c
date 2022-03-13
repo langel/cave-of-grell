@@ -56,7 +56,7 @@ void state_game_map_frame() {
 		2, 2 };
 	grafx_set_color(2);
 	SDL_RenderDrawRect(renderer, &player_pixel);
-	if (keys[SDL_SCANCODE_SPACE] == 1 || keys[SDL_SCANCODE_RETURN] == 1) {
+	if (keys[SDL_SCANCODE_RETURN] == 1) {
 		state_game_map_new();
 	}
 }

@@ -23,6 +23,12 @@ void state_controller_frame(SDL_Renderer * renderer) {
 	else if (state_id == 4) {
 		state_congration_frame();
 	}
+	else if (state_id == 5) {
+		state_narration_frame();
+	}
+	else if (state_id == 6) {
+		state_instructions_frame();
+	}
 
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {

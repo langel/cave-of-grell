@@ -41,6 +41,7 @@ void state_game_frame() {
 				// do crown check 
 				if (player_has_crown) state_congration_init();
 				// otherwise text
+				else state_narration_init();
 			}
 			else state_game_enter_level(player_update_level);
 		}
@@ -72,13 +73,9 @@ void state_game_frame() {
 	
 	if (keys[SDL_SCANCODE_TAB] == 1) {
 		game_state_id++;
-		printf("game_state_id : %d\n", game_state_id);
+		//printf("game_state_id : %d\n", game_state_id);
 	}
 
-	if (keys[SDL_SCANCODE_SPACE]) {
-		printf("player hp : %d", player_hp);
-	}
-	
 	if (keys[SDL_SCANCODE_SPACE] && player_hp < 0) {
 		state_id = 0;
 	}

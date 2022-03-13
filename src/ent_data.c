@@ -9,7 +9,7 @@ typedef struct {
 	int collisions;
 } ent;
 
-#define ENTS_COUNT 80
+#define ENTS_COUNT 99
 ent ents[map_levels][ENTS_COUNT];
 
 
@@ -50,9 +50,9 @@ ent ents[map_levels][ENTS_COUNT];
 #define ent_snerv 26
 
 // number of types per level
-int map_ent_type_count[9] = { 3, 6, 9,  13, 11, 15,  11, 10, 4 };
+int map_ent_type_count[9] = { 3, 6, 9,  13, 11, 15,  12, 10, 4 };
 // number of ents per level
-int map_ents_count[9] = { 5, 24, 28,  32, 16, 24,  48, 72, 1 };
+int map_ents_count[9] = { 5, 24, 28,  32, 16, 24,  56, 88, 1 };
 // ent types per level
 int map_ent_types[9][16]  = {
 	// level 1
@@ -64,7 +64,7 @@ int map_ent_types[9][16]  = {
 	{ ent_rat, ent_snake, ent_gnome, ent_herb, ent_coin, ent_coins, ent_cockatrice, ent_cockatrice, ent_jackalope, ent_snerv, ent_snerv },
 	{ ent_rat, ent_snake, ent_duck, ent_duck, ent_duck, ent_crab, ent_crab, ent_crab, ent_herb, ent_coin, ent_coins, ent_chest, ent_key, ent_herb, ent_snerv },
 	// level 7
-	{ ent_rat, ent_grell, ent_grell, ent_grell, ent_coins, ent_chest, ent_yonk, ent_ronk, ent_gonk, ent_bonk, ent_duck },
+	{ ent_rat, ent_grell, ent_grell, ent_grell, ent_grell, ent_coins, ent_chest, ent_yonk, ent_ronk, ent_gonk, ent_bonk, ent_duck },
 	{ ent_grell, ent_grell, ent_grell, ent_grell, ent_grell, ent_grell, ent_yonk, ent_ronk, ent_gonk, ent_bonk },
 	{ ent_yonk, ent_ronk, ent_gonk, ent_bonk },
 };
