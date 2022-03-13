@@ -61,21 +61,29 @@ void state_game_hud_render(SDL_Renderer * renderer) {
 	font_set_color(fonts[2], sdl_palette[0]);
 	text.h = fonts[2].height;
 	text.y += fonts[2].height;
+	int action_h = 8;
 	// action log 1
    font_render_text(action_log_0[0], fonts[2], renderer, text);
-	text.y += fonts[2].height;
+	text.y += action_h;
    font_render_text(action_log_0[1], fonts[2], renderer, text);
-	text.y += fonts[2].height;
+	text.y += action_h;
    font_render_text(action_log_0[2], fonts[2], renderer, text);
-	text.y += fonts[2].height;
+	text.y += action_h;
 	// action log 2
-	text.y += 10;
+	text.y += 5;
    font_render_text(action_log_1[0], fonts[2], renderer, text);
-	text.y += fonts[2].height;
+	text.y += action_h;
    font_render_text(action_log_1[1], fonts[2], renderer, text);
-	text.y += fonts[2].height;
+	text.y += action_h;
    font_render_text(action_log_1[2], fonts[2], renderer, text);
-	text.y += fonts[2].height;
+	text.y += action_h;
+	// action log 3
+	text.y += 5;
+   font_render_text(action_log_2[0], fonts[2], renderer, text);
+	text.y += action_h;
+   font_render_text(action_log_2[1], fonts[2], renderer, text);
+	text.y += action_h;
+   font_render_text(action_log_2[2], fonts[2], renderer, text);
 
 	/*
 	SDL_Rect ent_label_border = { 330, 32, 32, 10 };

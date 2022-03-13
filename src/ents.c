@@ -106,9 +106,7 @@ void ents_update(int map_level, ent ents[], SDL_Rect rect) {
 							player_gp += 1777;
 							player_xp += 1777;
 							ent_load_type(map_level, target_id, ent_nan);
-							// needs its own sfx
-							// XXX sfx crown get
-							sfx_gold();
+							// this triggers crown sfx
 							player_has_crown = 1;
 						}
 						if (ent_target.type == ent_ladder_down) {
@@ -185,7 +183,7 @@ void ents_update(int map_level, ent ents[], SDL_Rect rect) {
 						ents[target_id].hp -= damage;
 						if (ents[target_id].hp < 0) {
 							sprintf(action_log_temp[0], "%s ", ent_types[e.type].name);
-							sprintf(action_log_temp[1], " kills");
+							sprintf(action_log_temp[1], " murders");
 							sprintf(action_log_temp[2], "  %s", ent_target_type.name);
 							action_log_update();
 							printf("%s dies\n", ent_target_type.name);
@@ -193,7 +191,7 @@ void ents_update(int map_level, ent ents[], SDL_Rect rect) {
 							ents[target_id].type = 0;
 							// player bonuses
 							if (i == 0) {
-								sprintf(action_log_temp[0], "player quacks");
+								sprintf(action_log_temp[0], "player bills");
 								sprintf(action_log_temp[1], " %s for", ent_target_type.name);
 								sprintf(action_log_temp[2], "  %d xp", ent_target_type.xp);
 								action_log_update();
@@ -229,7 +227,6 @@ void ents_render(ent ents[], SDL_Renderer * renderer) {
 	ents_bubble_sort(ents, ents_sorted);
 	for (int i = 0; i < ENTS_COUNT; i++) {
 		ent e = ents[ents_sorted[i]];
-		// XXX some kind of death check
 		if (e.type != 0) {
 			SDL_Rect spr_rect;
 			if (e.type == ent_player) {

@@ -25,8 +25,7 @@ void state_menu_frame() {
 	menu_text_rect.h = fonts[1].height;
 	font_render_text("Langel/Puke7 MMXXII #7DRL", fonts[1], renderer, menu_text_rect);
 	// SPACEBAR START?
-	if (keys[SDL_SCANCODE_SPACE]) {
-		state_id = 2;
-		state_game_new_player();
+	if (keys[SDL_SCANCODE_SPACE] == 1) {
+		state_id = 6;
 	}
 }
