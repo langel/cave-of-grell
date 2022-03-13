@@ -1,7 +1,6 @@
 
 SDL_Rect playfield_rect = { 0, 0, 320, 200 };
 
-SDL_Texture * dirt_texture;
 
 void state_game_playfield_init() {
 	// dirt floor
@@ -27,10 +26,10 @@ void state_game_playfield_init() {
 
 void state_game_playfield_frame() {
 
-	ents_update(ents, playfield_rect);
+	ents_update(player_level, ents[player_level], playfield_rect);
 
-	camera_rect.x = (ents[0].xt - 16) * 10;
-	camera_rect.y = (ents[0].yt - 10) * 10;
+	camera_rect.x = (ents[player_level][0].xt - 16) * 10;
+	camera_rect.y = (ents[player_level][0].yt - 10) * 10;
 
 	// handle out of bounds camera positions
 	int map_px_w = map_width * 10;
@@ -68,21 +67,21 @@ void state_game_playfield_frame() {
 	SDL_RenderCopy(renderer, map_texture, &oob_cam, &oob_field);
 
 	// sprites
-	ents_render(ents, renderer);
+	ents_render(ents[player_level], renderer);
 	
-	if (ents[0].state == ent_state_player_controlled) {
-		ents[0].dir = 0xff;
-		if (keys[SDL_SCANCODE_RIGHT]) ents[0].dir = 0;
-		if (keys[SDL_SCANCODE_UP]) ents[0].dir = 1;
-		if (keys[SDL_SCANCODE_LEFT]) ents[0].dir = 2;
-		if (keys[SDL_SCANCODE_DOWN]) ents[0].dir = 3;
+	if (ents[player_level][0].state == ent_state_player_controlled) {
+		ents[player_level][0].dir = 0xff;
+		if (keys[SDL_SCANCODE_RIGHT]) ents[player_level][0].dir = 0;
+		if (keys[SDL_SCANCODE_UP]) ents[player_level][0].dir = 1;
+		if (keys[SDL_SCANCODE_LEFT]) ents[player_level][0].dir = 2;
+		if (keys[SDL_SCANCODE_DOWN]) ents[player_level][0].dir = 3;
 	}
 	if (keys[SDL_SCANCODE_C] == 1) {
 		printf("c pressed\n");
-		if (ents[0].state == ent_state_player_controlled) {
-			ents[0].state = ent_state_blocked;
+		if (ents[player_level][0].state == ent_state_player_controlled) {
+			ents[player_level][0].state = ent_state_blocked;
 		}
-		else ents[0].state = ent_state_player_controlled;
+		else ents[player_level][0].state = ent_state_player_controlled;
 	}
 
 }

@@ -4,9 +4,6 @@ double audio_hertz = 0.0;
 double audio_phase = 0.0;
 double audio_fade = 0.7;
 double audio_bend = 1.0;
-float brown_amp = 0.f;
-float brown_l = 0.f;
-float brown_r = 0.f;
 
 
 void audio_spec_log(SDL_AudioSpec *as) {
@@ -120,13 +117,9 @@ void audio_callback(void* userdata, uint8_t* byte_stream, int byte_stream_length
 		float output_r = 0.f;
 		audio_phase += audio_hertz;
 		if (audio_phase > 1.0) audio_phase -= 1.0;
-		output_l = output_r = osc_square_blep((float) audio_phase, (float) audio_hertz) * (float) audio_amp * 0.5f;
+		output_l = output_r = osc_square_blep((float) audio_phase, (float) audio_hertz) * (float) audio_amp * 0.8f;
 //		output_l = osc_square((float) audio_phase) * (float) audio_amp * 0.5f;
-		brown_l = osc_noise_brown(brown_l) 
-			* brown_amp * brown_amp * brown_amp;
-		brown_r = osc_noise_brown(brown_r) 
-			* brown_amp * brown_amp * brown_amp;
-		float_stream[i] = output_l + brown_l;
-		float_stream[i+1] = output_r + brown_r;;
+		float_stream[i] = output_l;
+		float_stream[i+1] = output_r;
 	}
 }

@@ -4,7 +4,6 @@ void state_controller_init() {
 	state_game_hud_init();
 	state_game_map_init();
 	state_game_playfield_init();
-	state_game_new_player();
 }
 
 void state_controller_frame(SDL_Renderer * renderer) {
@@ -17,6 +16,12 @@ void state_controller_frame(SDL_Renderer * renderer) {
 	}
 	else if (state_id == 2) {
 		state_game_frame();
+	}
+	else if (state_id == 3) {
+		state_map_render_loading_frame();
+	}
+	else if (state_id == 4) {
+		state_congration_frame();
 	}
 
 	while (SDL_PollEvent(&event)) {

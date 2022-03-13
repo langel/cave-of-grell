@@ -1,7 +1,8 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 #include "lib/debug.c"
 #include "lib/font.c"
@@ -25,14 +26,18 @@ SDL_DisplayMode display_mode;
 int fps;
 
 int running = 1;
-int state_id = 2;
+int state_id = 0;
 
 SDL_Rect camera_rect = { 0, 0, 320, 200 };
 
 int player_hp; // max hp not current hp
+int player_hp_max;
 int player_xp;
 int player_gp;
 int player_level;
+int player_update_level = 0;
+int player_has_crown = 0;
+SDL_Texture * dirt_texture;
 
 #include "src/core.c"
 
@@ -70,9 +75,12 @@ int main(int argc, char* args[]) {
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
 	SDL_Texture * overscale_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, video_w * 3, video_h * 3);
 
+	uint64_t start;
+	uint64_t end;
+	float elapsed;
 
 	while (running) {
-		uint64_t start = SDL_GetPerformanceCounter();
+		start = SDL_GetPerformanceCounter();
 		SDL_SetRenderTarget(renderer, vid_texture);
 		grafx_set_color(7);
 		SDL_RenderFillRect(renderer, &video_rect);
@@ -90,8 +98,8 @@ int main(int argc, char* args[]) {
 //			printf("%f\n", ents[0].x);
 		}
 		// fps throttle
-		uint64_t end = SDL_GetPerformanceCounter();
-		float elapsed = (float) (end - start) / (float) SDL_GetPerformanceFrequency() * 1000.f;
+		end = SDL_GetPerformanceCounter();
+		elapsed = (float) (end - start) / (float) SDL_GetPerformanceFrequency() * 1000.f;
 		// only delay if framerate is above 60
 		if (fps > 60) SDL_Delay(floor(1000.f / 60.f - elapsed));
 

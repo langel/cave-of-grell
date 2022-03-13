@@ -38,3 +38,17 @@ void sfx_heal() {
 	audio_bend = 1.003;
 	audio_fade = 0.99977;
 }
+
+void sfx_crown() {
+	audio_hertz = (float) (1777 - rand() % 22) / 32000.0;
+	audio_amp = 0.25;
+	audio_bend = 1.000001;
+	audio_fade = 0.9997;
+}
+
+void sfx_congration() {
+	audio_hertz = (float) (420 + rand() % 22) / 32000.0;
+	audio_amp = 0.3;
+	audio_bend = 1.0000025;
+	audio_fade = 0.99989;
+}

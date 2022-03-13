@@ -30,7 +30,7 @@ void state_game_hud_render(SDL_Renderer * renderer) {
 	hud_title_rect.y = 188;
 	hud_title_rect.x = 322;
 	hud_title_rect.h = fonts[2].height;
-	font_render_text("#7DRL  2020  puke7", fonts[2], renderer, hud_title_rect);
+	font_render_text("#7DRL  2022  puke7", fonts[2], renderer, hud_title_rect);
 
 	// PLAYER DATA
 	hud_title_rect.x = 320;
@@ -40,7 +40,7 @@ void state_game_hud_render(SDL_Renderer * renderer) {
 	font_set_color(fonts[0], sdl_palette[0]);
 	char words[32];
 	// Health
-	if (ents[0].hp >= 0) sprintf(words, "Health  %d/%d", ents[0].hp, player_hp);
+	if (player_hp >= 0) sprintf(words, "Health  %d/%d", player_hp, player_hp_max);
 	else sprintf(words, "Player Died.");
 	font_render_text(words, fonts[0], renderer, text);
 	// GP
@@ -51,6 +51,10 @@ void state_game_hud_render(SDL_Renderer * renderer) {
 	text.y += fonts[0].height;
 	sprintf(words, "XP   %d", player_xp);
 	font_render_text(words, fonts[0], renderer, text);
+	// Level 
+	text.y += fonts[0].height;
+	sprintf(words, "Depth   %d", player_level + 1);
+	font_render_text(words, fonts[0], renderer, text);
 
 	// action text
 	text.y += 10;
@@ -59,10 +63,10 @@ void state_game_hud_render(SDL_Renderer * renderer) {
 	hud_title_rect.h = fonts[2].height;
 	text.y += fonts[2].height;
 	sprintf(words, "Wow did something");
-	font_render_text(words, fonts[2], renderer, text);
+//	font_render_text(words, fonts[2], renderer, text);
 	text.y += fonts[2].height;
 	sprintf(words, "  happen?");
-	font_render_text(words, fonts[2], renderer, text);
+//	font_render_text(words, fonts[2], renderer, text);
 
 	/*
 	SDL_Rect ent_label_border = { 330, 32, 32, 10 };
