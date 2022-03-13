@@ -59,14 +59,23 @@ void state_game_hud_render(SDL_Renderer * renderer) {
 	// action text
 	text.y += 10;
 	font_set_color(fonts[2], sdl_palette[0]);
-	hud_title_rect.x = 324;
-	hud_title_rect.h = fonts[2].height;
+	text.h = fonts[2].height;
 	text.y += fonts[2].height;
-	sprintf(words, "Wow did something");
-//	font_render_text(words, fonts[2], renderer, text);
+	// action log 1
+   font_render_text(action_log_0[0], fonts[2], renderer, text);
 	text.y += fonts[2].height;
-	sprintf(words, "  happen?");
-//	font_render_text(words, fonts[2], renderer, text);
+   font_render_text(action_log_0[1], fonts[2], renderer, text);
+	text.y += fonts[2].height;
+   font_render_text(action_log_0[2], fonts[2], renderer, text);
+	text.y += fonts[2].height;
+	// action log 2
+	text.y += 10;
+   font_render_text(action_log_1[0], fonts[2], renderer, text);
+	text.y += fonts[2].height;
+   font_render_text(action_log_1[1], fonts[2], renderer, text);
+	text.y += fonts[2].height;
+   font_render_text(action_log_1[2], fonts[2], renderer, text);
+	text.y += fonts[2].height;
 
 	/*
 	SDL_Rect ent_label_border = { 330, 32, 32, 10 };

@@ -18,7 +18,7 @@ void sfx_death() {
 
 void sfx_footstep() {
 	if (audio_amp < 0.1) {
-		audio_amp = 0.25;
+		audio_amp = 0.33;
 		audio_fade = 0.995;
 		audio_bend = 1;
 		audio_hertz = (double) (80 + rand() % 20) / 32000.0;
@@ -27,7 +27,7 @@ void sfx_footstep() {
 
 void sfx_gold() {
 	audio_hertz = (float) (2000 + rand() % 22) / 32000.0;
-	audio_amp = 0.2;
+	audio_amp = 0.25;
 	audio_bend = 1.0;
 	audio_fade = 0.99989;
 }
@@ -41,14 +41,14 @@ void sfx_heal() {
 
 void sfx_crown() {
 	audio_hertz = (float) (1777 - rand() % 22) / 32000.0;
-	audio_amp = 0.25;
+	audio_amp = 0.3;
 	audio_bend = 1.000001;
 	audio_fade = 0.9997;
 }
 
 void sfx_congration() {
 	audio_hertz = (float) (420 + rand() % 22) / 32000.0;
-	audio_amp = 0.3;
+	audio_amp = 0.3333;
 	audio_bend = 1.0000025;
 	audio_fade = 0.99989;
 }

@@ -116,34 +116,55 @@ void ents_update(int map_level, ent ents[], SDL_Rect rect) {
 						if (ent_target.type == ent_ladder_up) {
 							player_update_level = -1;
 						}
+						int amount = 0;
 						if (ent_target.type == ent_chest) {
 							// is it gold or is it a mimic?
 							if (rand() % 10 < player_level) {
 								ent_load_type(map_level, target_id, ent_mimic);
 							}
 							else {
-								player_gp += rand() % 100;
+								amount = rand() % 100;
+								sprintf(action_log_temp[0], "%s %s ", ent_target_type.name, ent_target_type.verb);
+								sprintf(action_log_temp[1], "  %d gp", amount);
+								action_log_update();
+								player_gp += amount;
 								ent_load_type(map_level, target_id, ent_chest_emptied);
 								sfx_gold();
 							}
 						}
 						if (ent_target.type == ent_coin) {
-							player_gp++;
+							amount = 1;
+							sprintf(action_log_temp[0], "%s %s", ent_target_type.name, ent_target_type.verb);
+							sprintf(action_log_temp[1], "  %d gp", amount);
+							action_log_update();
+							player_gp += amount;
 							ent_load_type(map_level, target_id, ent_nan);
 							sfx_gold();
 						}
 						if (ent_target.type == ent_coins) {
-							player_gp += rand() % 7 + 5;
+							amount = 5 + rand() % 7;
+							sprintf(action_log_temp[0], "%s %s", ent_target_type.name, ent_target_type.verb);
+							sprintf(action_log_temp[1], "  %d gp", amount);
+							action_log_update();
+							player_gp += amount;
 							ent_load_type(map_level, target_id, ent_nan);
 							sfx_gold();
 						}
 						if (ent_target.type == ent_key) {
-							player_gp += rand() % 17 + 7;
+							amount = 7 + rand() % 17;
+							sprintf(action_log_temp[0], "%s %s ", ent_target_type.name, ent_target_type.verb);
+							sprintf(action_log_temp[1], "  %d gp", amount);
+							action_log_update();
+							player_gp += amount;
 							ent_load_type(map_level, target_id, ent_nan);
 							sfx_gold();
 						}
 						if (ent_target.type == ent_herb) {
-							e.hp += 20 + rand() % 15;
+							amount = 20 + rand() % 15;
+							sprintf(action_log_temp[0], "%s %s ", ent_target_type.name, ent_target_type.verb);
+							sprintf(action_log_temp[1], "  %d HP", amount);
+							action_log_update();
+							e.hp += amount;
 							if (e.hp > player_hp_max) e.hp = player_hp_max;
 							player_hp = e.hp;
 							ent_load_type(map_level, target_id, ent_nan);
@@ -154,16 +175,27 @@ void ents_update(int map_level, ent ents[], SDL_Rect rect) {
 					if (ent_target.state != ent_state_dormant && e.type != ent_target.type) {
 						int damage = ent_target_type.damage_base + rand() %  ent_target_type.damage_rand;
 						if (e.type == ent_player || e.type == ent_player_with_crown || ent_target.type == ent_player || ent_target.type == ent_player_with_crown) {
+							sprintf(action_log_temp[0], "%s %s", ent_types[e.type].name, ent_types[e.type].verb);
+							sprintf(action_log_temp[1], " %s for", ent_target_type.name);
+							sprintf(action_log_temp[2], "  %d damage", damage);
+							action_log_update();
 							printf("%s %s %s for %d damage\n", ent_types[e.type].name, ent_types[e.type].verb, ent_target_type.name, damage);
 						}
-						player_hp = e.hp;
 						ents[target_id].hp -= damage;
 						if (ents[target_id].hp < 0) {
+							sprintf(action_log_temp[0], "%s ", ent_types[e.type].name);
+							sprintf(action_log_temp[1], " kills");
+							sprintf(action_log_temp[2], "  %s", ent_target_type.name);
+							action_log_update();
 							printf("%s dies\n", ent_target_type.name);
 							ents[target_id].state = ent_state_dead;
 							ents[target_id].type = 0;
 							// player bonuses
 							if (i == 0) {
+								sprintf(action_log_temp[0], "player quacks");
+								sprintf(action_log_temp[1], " %s for", ent_target_type.name);
+								sprintf(action_log_temp[2], "  %d xp", ent_target_type.xp);
+								action_log_update();
 								player_xp += ent_target_type.xp;
 								player_hp_max += player_level + 1;
 								player_hp += (int) ceilf((float) (player_level + 1) * 0.6f);

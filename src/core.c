@@ -1,6 +1,7 @@
 #include "./grafx.c"
 #include "./sfx.c"
 
+#include "./action_log.c"
 #include "./map_data.c"
 #include "./ent_data.c"
 #include "./ents.c"
