@@ -18,6 +18,7 @@ void state_game_new_player() {
 	for (int i = 0; i < map_levels; i++) {
 		map_gen_new(i);
 	}
+	player_frame_counter = 0;
 	state_game_map_render_level();
 }
 
@@ -32,9 +33,11 @@ void state_game_enter_level(int modifier) {
 void state_game_frame() {
 
 	player_hp = ents[player_level][0].hp;
+	player_frame_counter++;
 
 	// LADDER HANDLING
 	if (player_update_level != 0) {
+		printf("%d frames aka %f seconds aka %f minutes\n", player_frame_counter, (float) player_frame_counter / 60.f, (float) player_frame_counter / 3600.f);
 		// going up
 		if (player_update_level == -1) {
 			if (player_level == 0) {

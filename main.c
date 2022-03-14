@@ -39,6 +39,7 @@ int player_update_level = 0;
 int player_has_crown = 0;
 int player_steps = 0;
 int games_won = 0;
+int player_frame_counter;
 SDL_Texture * dirt_texture;
 
 #include "src/core.c"

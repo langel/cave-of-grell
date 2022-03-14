@@ -16,6 +16,19 @@ void state_congration_frame() {
 	SDL_RenderCopy(renderer, dirt_texture, NULL, NULL);
 	// title of game
 	SDL_RenderCopy(renderer, spriteshit, &congration_title_sprite, &congration_title_rect);
+	// title of game again
+	congration_text_rect.h = fonts[0].height;
+	font_set_color(fonts[0], sdl_palette[1]);
+	congration_text_rect.x = 330;
+	congration_text_rect.y = 2;
+	font_render_text("Cave", fonts[0], renderer, congration_text_rect);
+	congration_text_rect.y = 12;
+	font_render_text("     of", fonts[0], renderer, congration_text_rect);
+	congration_text_rect.y = 4;
+	congration_text_rect.x = 360;
+	congration_text_rect.h = fonts[1].height;
+	font_set_color(fonts[1], sdl_palette[4]);
+	font_render_text("Grell", fonts[1], renderer, congration_text_rect);
 	// congration text
 	font_set_color(fonts[0], sdl_palette[0]);
 	congration_text_rect.x = 160;

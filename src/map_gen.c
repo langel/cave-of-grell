@@ -93,7 +93,6 @@ void map_gen_new(int map_level) {
 	}
 	
 	// ENTITY PLOTTING!!!
-	ents_init(map_level);
 	// up ladder
 	ent_load_type(map_level, 2, ent_ladder_up);
 	ents[map_level][2].xt = cavity_centers[0][0];
@@ -116,6 +115,8 @@ void map_gen_new(int map_level) {
 	ents[map_level][0].xt = cavity_centers[0][0] + 1;
 	ents[map_level][0].yt = cavity_centers[0][1];
 	ents[map_level][0].state = ent_state_player_controlled;
+	// Everything Else!!
+	ents_init(map_level);
 
 	// carve corridors between rooms
 	for (int i = 1; i < map_gen_room_count[map_level]; i++) {

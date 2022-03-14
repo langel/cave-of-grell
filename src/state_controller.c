@@ -7,6 +7,8 @@ void state_controller_init() {
 }
 
 void state_controller_frame(SDL_Renderer * renderer) {
+//	player_frame_counter = 133;
+//	state_id = 4;
 
 	if (state_id == 0) {
 		state_menu_frame();
