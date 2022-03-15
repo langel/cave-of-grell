@@ -69,8 +69,8 @@ void map_playfield_render(int map_level) {
 	SDL_SetRenderTarget(renderer, map_texture);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderFillRect(renderer, &map_texture_rect);
-	for (int x = 0; x < map_width; x++) {
-		for (int y = 0; y < map_height; y++) {
+	for (int x = 1; x < map_width-1; x++) {
+		for (int y = 1; y < map_height-1; y++) {
 			if (map_data[map_level][x][y] == 1) {
 				map_plot_wall_tile(map_level, x, y, map_texture_rect);
 			}
