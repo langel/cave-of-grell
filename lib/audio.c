@@ -47,7 +47,6 @@ void audio_init(int sample_rate, int channels, int buffer_sample_count, SDL_Audi
 
 
 
-const double osc_tao = M_PI * 2;
 
 float osc_noise(float pos) {
 	return (((float)rand()/(float)(RAND_MAX)) * 2) - 1;
@@ -59,10 +58,6 @@ float osc_pulse(float pos, float width) {
 
 float osc_saw(float pos) {
 	return (pos * 2) - 1;
-}
-
-float osc_sin(float pos) {
-	return sin(pos * osc_tao);
 }
 
 float osc_square(float pos) {
