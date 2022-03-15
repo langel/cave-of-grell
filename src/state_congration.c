@@ -19,28 +19,40 @@ void state_congration_frame() {
 	// title of game again
 	congration_text_rect.h = fonts[0].height;
 	font_set_color(fonts[0], sdl_palette[1]);
-	congration_text_rect.x = 330;
-	congration_text_rect.y = 2;
+	congration_text_rect.x = 280;
+	congration_text_rect.y = 30;
 	font_render_text("Cave", fonts[0], renderer, congration_text_rect);
-	congration_text_rect.y = 12;
+	congration_text_rect.y = 42;
 	font_render_text("     of", fonts[0], renderer, congration_text_rect);
-	congration_text_rect.y = 4;
-	congration_text_rect.x = 360;
+	congration_text_rect.y = 34;
+	congration_text_rect.x = 310;
 	congration_text_rect.h = fonts[1].height;
 	font_set_color(fonts[1], sdl_palette[4]);
 	font_render_text("Grell", fonts[1], renderer, congration_text_rect);
 	// congration text
 	font_set_color(fonts[0], sdl_palette[0]);
-	congration_text_rect.x = 160;
-	congration_text_rect.y = 60;
+	congration_text_rect.x = 90;
+	congration_text_rect.y = 45;
 	congration_text_rect.h = fonts[0].height;
 	font_render_text("Thou art haveth survived teh", fonts[0], renderer, congration_text_rect);
 	// copy text
 	font_set_color(fonts[1], sdl_palette[1]);
-	congration_text_rect.x = 125;
+	congration_text_rect.x = 30;
 	congration_text_rect.y = 20;
 	congration_text_rect.h = fonts[1].height;
 	font_render_text("Congrations!!", fonts[1], renderer, congration_text_rect);
+	// xp / gp / time
+	font_set_color(fonts[1], sdl_palette[1]);
+	congration_text_rect.x = 80;
+	congration_text_rect.y = 70;
+	congration_text_rect.h = fonts[1].height;
+	char str[64];
+	int tf = player_frame_counter % 60;
+	int ts = ((player_frame_counter - tf) % 3600) / 60;
+	int tm = (player_frame_counter - ts - tf) / 3600;
+	sprintf(str, "%d xp   %d gp   %02d:%02d.%02d", player_xp, player_gp, tm, ts, tf);
+	font_render_text(str, fonts[1], renderer, congration_text_rect);
+
 	// SPACEBAR START?
 	if (keys[SDL_SCANCODE_SPACE]) {
 		state_id = 0;
