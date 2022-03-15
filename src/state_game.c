@@ -37,7 +37,7 @@ void state_game_frame() {
 
 	// LADDER HANDLING
 	if (player_update_level != 0) {
-		printf("%d frames aka %f seconds aka %f minutes\n", player_frame_counter, (float) player_frame_counter / 60.f, (float) player_frame_counter / 3600.f);
+		//printf("%d frames aka %f seconds aka %f minutes\n", player_frame_counter, (float) player_frame_counter / 60.f, (float) player_frame_counter / 3600.f);
 		// going up
 		if (player_update_level == -1) {
 			if (player_level == 0) {

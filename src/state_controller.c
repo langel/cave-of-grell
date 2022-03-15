@@ -44,6 +44,9 @@ void state_controller_frame(SDL_Renderer * renderer) {
 					window_h = event.window.data2;
 					printf("window size changed: %d x %d\n", window_w, window_h);
 				}
+				if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
+					running = 0;
+				}
 				break;
 		}
 	}
