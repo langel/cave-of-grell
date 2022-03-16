@@ -12,6 +12,7 @@ void state_game_playfield_init() {
 			int color_id = (rng8() & rng8() & rng8() & rng8() & rng8() & 13) ? 5 : 7;
 			uint32_t dirt = 0;
 			if (color_id == 7) {
+				// add some noise to the dirt floor
 				dirt += (sdl_palette[color_id].r + (rand() % 16) - 8) << 24;
 				dirt += (sdl_palette[color_id].g + (rand() % 16) - 8) << 16;
 				dirt += (sdl_palette[color_id].b + (rand() % 16) - 8) << 8;
@@ -21,6 +22,8 @@ void state_game_playfield_init() {
 	}
 	SDL_UpdateTexture(dirt_texture, NULL, dirt_pixels, playfield_rect.w * 4);
 	free(dirt_pixels);
+	// setup map pixel ram
+	map_surface_pixels = malloc(map_surface_size);
 }
 
 

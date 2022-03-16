@@ -2,6 +2,8 @@ SDL_Rect map_texture_rect = { 0, 0, map_width * 10, map_height * 10 };
 //SDL_Rect map_pixel;
 SDL_Texture * map_texture;
 SDL_Texture * map_view_texture;
+int map_surface_size = map_width * 10 * map_height * 10 * 4;
+uint32_t * map_surface_pixels;
 
 int map_wall_pal[9][4] = {
 	{ 6, 5, 0, 7 },
@@ -48,7 +50,8 @@ void map_plot_wall_tile(int map_level, int x, int y, SDL_Rect rect) {
 				grafx_set_color(color_id);
 				map_pixel.x = x1 + x2;
 				map_pixel.y = y1 + y2;
-				SDL_RenderDrawPoint(renderer, map_pixel.x, map_pixel.y);
+				//SDL_RenderDrawPoint(renderer, map_pixel.x, map_pixel.y);
+				map_surface_pixels[map_pixel.x + map_pixel.y * map_width * 10] = surface_palette[color_id];
 			}
 		}
 	}
@@ -69,7 +72,8 @@ void map_plot_water_tile(int map_level, int x, int y, SDL_Rect rect) {
 				grafx_set_color(color_id);
 				map_pixel.x = x1 + x2;
 				map_pixel.y = y1 + y2;
-				SDL_RenderDrawPoint(renderer, map_pixel.x, map_pixel.y);
+//				SDL_RenderDrawPoint(renderer, map_pixel.x, map_pixel.y);
+				map_surface_pixels[map_pixel.x + map_pixel.y * map_width * 10] = surface_palette[color_id];
 			}
 		}
 	}
@@ -84,6 +88,9 @@ void map_playfield_render(int map_level) {
 	SDL_SetRenderTarget(renderer, map_texture);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 	SDL_RenderFillRect(renderer, &map_texture_rect);
+	for (int i = 0; i < map_width * 10 * map_height * 10; i++) {
+		map_surface_pixels[i] = (uint32_t) 0;
+	}
 	for (int x = 0; x < map_width; x++) {
 		for (int y = 0; y < map_height; y++) {
 			if (map_data[map_level][x][y] == 1) {
@@ -94,6 +101,7 @@ void map_playfield_render(int map_level) {
 			}
 		}
 	}
+	SDL_UpdateTexture(map_texture, NULL, map_surface_pixels, map_width * 10 * 4);
 	SDL_SetRenderTarget(renderer, stash);
 }
 
