@@ -91,13 +91,25 @@ void map_gen_new(int map_level) {
 			map_data[map_level][x][y] = 1;
 		}
 	}
+
+	// clears all surrounding tile of tile at x,y
+	void clear_tile_area(int x, int y) {
+		for (int i = x - 1; i < x + 2; i++) {
+			for (int j = y - 1; j < y + 2; j++) {
+				map_data[map_level][i][j] = 0;
+			}
+		}
+	}
 	
 	// ENTITY PLOTTING!!!
 	// up ladder
+	clear_tile_area(cavity_centers[0][0], cavity_centers[0][1]);
 	ent_load_type(map_level, 2, ent_ladder_up);
 	ents[map_level][2].xt = cavity_centers[0][0];
 	ents[map_level][2].yt = cavity_centers[0][1];
+	// find last room of level
 	int last_room = map_gen_room_count[map_level] - 1;
+	clear_tile_area(cavity_centers[last_room][0], cavity_centers[last_room][1]);
 	if (map_level < 8) {
 		// down ladder
 		ent_load_type(map_level, 1, ent_ladder_down);
