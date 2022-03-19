@@ -80,7 +80,7 @@ int main(int argc, char* args[]) {
 
 	uint64_t start;
 	uint64_t end;
-	float elapsed;
+	double elapsed;
 
 	while (running) {
 		start = SDL_GetPerformanceCounter();
@@ -102,9 +102,9 @@ int main(int argc, char* args[]) {
 		}
 		// fps throttle
 		end = SDL_GetPerformanceCounter();
-		elapsed = (float) (end - start) / (float) SDL_GetPerformanceFrequency() * 1000.f;
+		elapsed = (double) (end - start) / ( (double) SDL_GetPerformanceFrequency() * 1000.0);
 		// only delay if framerate is above 60
-		if (fps > 60) SDL_Delay(floor(1000.f / 60.f - elapsed));
+		if (fps > 60) SDL_Delay(floor(1000.0 / 60.0 - elapsed));
 
 	}
 
