@@ -27,6 +27,7 @@ int map_gen_map_size[9][2] = { // level id / x, y max
 	{ 80, 50 }, { 126, 78 }, { 32, 20 },
 };
 
+
 void map_gen_new(int map_level) {
 	
 	// cavity id / x,y
@@ -92,24 +93,31 @@ void map_gen_new(int map_level) {
 		}
 	}
 
-	// clears all surrounding tile of tile at x,y
-	void clear_tile_area(int x, int y) {
-		for (int i = x - 1; i < x + 2; i++) {
-			for (int j = y - 1; j < y + 2; j++) {
-				map_data[map_level][i][j] = 0;
-			}
+	// ENTITY PLOTTING!!!
+	int mx, my;
+	// up ladder
+	// clear space for ladder
+	mx = cavity_centers[0][0];
+	my = cavity_centers[0][1];
+	for (int i = mx - 1; i < mx + 2; i++) {
+		for (int j = my - 1; j < my + 2; j++) {
+			map_data[map_level][i][j] = 0;
 		}
 	}
-	
-	// ENTITY PLOTTING!!!
-	// up ladder
-	clear_tile_area(cavity_centers[0][0], cavity_centers[0][1]);
+	// place ladder
 	ent_load_type(map_level, 2, ent_ladder_up);
 	ents[map_level][2].xt = cavity_centers[0][0];
 	ents[map_level][2].yt = cavity_centers[0][1];
 	// find last room of level
 	int last_room = map_gen_room_count[map_level] - 1;
-	clear_tile_area(cavity_centers[last_room][0], cavity_centers[last_room][1]);
+	// clear space for ladder
+	mx = cavity_centers[last_room][0];
+	my = cavity_centers[last_room][1];
+	for (int i = mx - 1; i < mx + 2; i++) {
+		for (int j = my - 1; j < my + 2; j++) {
+			map_data[map_level][i][j] = 0;
+		}
+	}
 	if (map_level < 8) {
 		// down ladder
 		ent_load_type(map_level, 1, ent_ladder_down);

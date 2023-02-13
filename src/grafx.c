@@ -28,6 +28,10 @@ void grafx_init(SDL_Renderer * renderer) {
 	}
 	// load the spriteshit
 	SDL_Surface * image = SDL_LoadBMP("assets/spriteshit.bmp");
+	if (!image) {
+		printf("ASSET LOAD ERROR: %s\n", SDL_GetError());
+		exit(0);
+	}
 	printf("spriteshit pixel depth : %d\n", image->format->BitsPerPixel);
 	SDL_SetColorKey(image, SDL_TRUE, SDL_MapRGB(image->format, 0, 0, 0)); 
 	spriteshit = SDL_CreateTextureFromSurface(renderer, image);
