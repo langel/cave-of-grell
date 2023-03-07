@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <SDL2/SDL.h>
+#include "SDL.h"
 #include "lib/debug.c"
 #include "lib/font.c"
 #include "lib/generic.c"
