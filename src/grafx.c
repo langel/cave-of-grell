@@ -1,3 +1,4 @@
+/* source from https://lospec.com/palette-list/matriax8c */
 SDL_Color sdl_palette[8] = {
 	{ 0xf0, 0xf0, 0xdc, 0xff }, // 0 white
 	{ 0xfa, 0xc8, 0x00, 0xff }, // 1 yellow
